@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const dailyLogs_controller_js_1 = require("../controllers/dailyLogs.controller.js");
+const auth_js_1 = require("../middleware/auth.js");
+const validate_js_1 = require("../middleware/validate.js");
+const index_js_1 = require("../schemas/index.js");
+const router = (0, express_1.Router)();
+router.get('/today', auth_js_1.authenticateToken, dailyLogs_controller_js_1.DailyLogsController.getToday);
+router.post('/water', auth_js_1.authenticateToken, (0, validate_js_1.validate)(index_js_1.updateWaterSchema), dailyLogs_controller_js_1.DailyLogsController.updateWater);
+router.post('/sleep', auth_js_1.authenticateToken, (0, validate_js_1.validate)(index_js_1.updateSleepSchema), dailyLogs_controller_js_1.DailyLogsController.updateSleep);
+router.post('/steps', auth_js_1.authenticateToken, (0, validate_js_1.validate)(index_js_1.updateStepsSchema), dailyLogs_controller_js_1.DailyLogsController.updateSteps);
+exports.default = router;
