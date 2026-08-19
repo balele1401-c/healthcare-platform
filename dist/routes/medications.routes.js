@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const medications_controller_js_1 = require("../controllers/medications.controller.js");
+const auth_js_1 = require("../middleware/auth.js");
+const validate_js_1 = require("../middleware/validate.js");
+const index_js_1 = require("../schemas/index.js");
+const router = (0, express_1.Router)();
+router.get('/today', auth_js_1.authenticateToken, medications_controller_js_1.MedicationsController.getTodayMedications);
+router.post('/', auth_js_1.authenticateToken, (0, validate_js_1.validate)(index_js_1.createMedicationSchema), medications_controller_js_1.MedicationsController.createMedication);
+router.post('/:id/check', auth_js_1.authenticateToken, (0, validate_js_1.validate)(index_js_1.checkMedicationSchema), medications_controller_js_1.MedicationsController.checkMedication);
+exports.default = router;
