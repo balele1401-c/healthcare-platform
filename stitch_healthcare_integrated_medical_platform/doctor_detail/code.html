@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Doctor Profile - HealthCare</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#0066ff",
+                    "on-tertiary-fixed-variant": "#43474b",
+                    "on-primary-fixed-variant": "#003fa4",
+                    "on-surface-variant": "#424656",
+                    "on-tertiary-container": "#f4f8fc",
+                    "on-secondary": "#ffffff",
+                    "on-surface": "#161c27",
+                    "outline": "#727687",
+                    "tertiary-fixed-dim": "#c3c7cb",
+                    "surface-container": "#e8eeff",
+                    "secondary-fixed-dim": "#76d6d5",
+                    "surface-variant": "#dde2f3",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#dae1ff",
+                    "surface-container-high": "#e3e8f9",
+                    "inverse-on-surface": "#ecf0ff",
+                    "primary-fixed-dim": "#b3c5ff",
+                    "tertiary": "#555a5d",
+                    "surface-tint": "#0054d6",
+                    "surface": "#f9f9ff",
+                    "on-tertiary-fixed": "#171c1f",
+                    "surface-bright": "#f9f9ff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#dfe3e7",
+                    "on-secondary-container": "#006e6e",
+                    "surface-container-highest": "#dde2f3",
+                    "inverse-primary": "#b3c5ff",
+                    "outline-variant": "#c2c6d8",
+                    "on-primary-fixed": "#001849",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#90efef",
+                    "surface-dim": "#d4daea",
+                    "secondary-fixed": "#93f2f2",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "background": "#f9f9ff",
+                    "on-secondary-fixed": "#002020",
+                    "tertiary-container": "#6d7276",
+                    "on-background": "#161c27",
+                    "on-secondary-fixed-variant": "#004f4f",
+                    "primary": "#0050cb",
+                    "secondary": "#006a6a",
+                    "surface-container-low": "#f1f3ff",
+                    "inverse-surface": "#2a303d",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#f8f7ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1440px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "margin-mobile": "16px",
+                    "3xl": "64px",
+                    "sm": "8px",
+                    "margin-desktop": "32px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "2xl": "48px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Hide scrollbar for clean horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 sticky top-0 z-50 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-md">
+<button class="text-primary dark:text-inverse-primary hover:bg-surface-container-high transition-colors p-sm rounded-full opacity-80 scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">
+            HealthCare
+        </div>
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant cursor-pointer hover:bg-surface-container-high transition-colors">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A small, professional headshot of a healthcare administrator in a clean, modern clinical setting with soft, high-key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBOqaGrcFehxesgKYhSDXr2SFHHl80L5V_jfv8NYbsNqFDxdEP71bi-tonsXi-_WyG3I4YzijN3_jIkQOeImQyXfvf_U91tX050M9p8usjfV34bnyoqiP0bvTG8i43jYhvVEBXK862lLXHSWLlXcAGc5tgUEEG7qmi4rfw_lzeaVfw-ScJNG2qLa2YrUxbBJD9fNlVobsvrDUk3rnzDTLpEChmYgcNt7TFHTyR5dHXJyl5PBmX3P2Jcw"/>
+</div>
+</div>
+</header>
+<main class="max-w-3xl mx-auto md:py-xl md:px-lg px-0 py-0">
+<!-- Hero Section -->
+<section class="bg-surface relative pt-lg pb-md px-margin-mobile md:rounded-xl md:shadow-[0_4px_15px_rgba(0,0,0,0.04)] md:border border-outline-variant md:mb-lg">
+<div class="flex flex-col md:flex-row items-center md:items-start gap-lg text-center md:text-left relative z-10">
+<div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-surface-container-lowest shadow-[0_4px_15px_rgba(0,0,0,0.08)] overflow-hidden shrink-0 bg-surface-variant">
+<img alt="Dr. Sarah Jenkins" class="w-full h-full object-cover" data-alt="A high-resolution, professional portrait of a confident female cardiologist wearing a crisp white coat over a light blue shirt, standing in a brightly lit, modern hospital corridor with soft, diffused light mode aesthetics. The image conveys clinical clarity and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC--Ryuw537y0kL1gqgGqrjCXpBuFYVoY0_vpR8oQe4JhHeAiQDOWKWOenW1YV2TGAoQ2_91Mke_pZ8SIs-mO55SXpRuDzDeuQNkEsUdj2ltCVIH_VrPtNUpVN1Y_B8QZCEfQtodSS1DEWp-UEWiWxTgRniDKslcEusWMgwR3xg3vGd4hbha6bY0E4fAfPU5Giv2Frpdv1Dw3YbrU0ro7siW1P5OKsw78uf-i9GKjSg7cFKpjSTEH2Jg"/>
+</div>
+<div class="flex-1 space-y-sm mt-md md:mt-0">
+<div class="flex flex-col md:flex-row items-center gap-sm">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Dr. Sarah Jenkins</h1>
+<span class="bg-secondary-container/10 text-secondary px-2 py-1 rounded-full font-label-md text-label-md flex items-center gap-xs mt-xs md:mt-0">
+<span class="material-symbols-outlined icon-fill text-[14px]" data-icon="verified">verified</span>
+                            Top Rated
+                        </span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary">Senior Cardiologist</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center justify-center md:justify-start gap-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="local_hospital">local_hospital</span>
+                        Mercy General Hospital
+                    </p>
+<div class="flex items-center justify-center md:justify-start gap-md mt-md">
+<div class="flex flex-col items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface">15+</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Years Exp</span>
+</div>
+<div class="w-px h-8 bg-outline-variant"></div>
+<div class="flex flex-col items-center">
+<div class="flex items-center text-primary">
+<span class="font-headline-sm text-headline-sm">4.9</span>
+<span class="material-symbols-outlined icon-fill text-[16px] ml-xs" data-icon="star">star</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">300+ Reviews</span>
+</div>
+<div class="w-px h-8 bg-outline-variant"></div>
+<div class="flex flex-col items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface">4k+</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Patients</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative background blob -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/30 rounded-bl-full blur-3xl -z-0 pointer-events-none hidden md:block"></div>
+</section>
+<!-- Tabs -->
+<nav class="flex border-b border-outline-variant px-margin-mobile md:px-0 sticky top-16 bg-background z-40">
+<button class="flex-1 py-md font-headline-sm text-headline-sm text-primary border-b-2 border-primary transition-colors">
+                About
+            </button>
+<button class="flex-1 py-md font-headline-sm text-headline-sm text-on-surface-variant hover:text-on-surface transition-colors">
+                Reviews
+            </button>
+<button class="flex-1 py-md font-headline-sm text-headline-sm text-on-surface-variant hover:text-on-surface transition-colors">
+                Location
+            </button>
+</nav>
+<!-- Content Canvas -->
+<section class="px-margin-mobile md:px-0 py-lg space-y-xl">
+<!-- Biography -->
+<div class="bg-surface rounded-xl p-lg shadow-[0_4px_15px_rgba(0,0,0,0.04)] border border-outline-variant">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Biography</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Dr. Sarah Jenkins is a board-certified cardiologist with over 15 years of experience in diagnosing and treating cardiovascular diseases. She completed her fellowship at Johns Hopkins Hospital and specializes in preventive cardiology and heart failure management. Dedicated to patient-centered care, she combines advanced medical technology with a compassionate approach to improve patient outcomes.
+                </p>
+<button class="text-primary font-label-md text-label-md mt-sm hover:underline">Read More</button>
+</div>
+<!-- Specialties -->
+<div class="bg-surface rounded-xl p-lg shadow-[0_4px_15px_rgba(0,0,0,0.04)] border border-outline-variant">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Specialties &amp; Conditions</h2>
+<div class="flex flex-wrap gap-sm">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-body-sm text-body-sm border border-outline-variant">Preventive Cardiology</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-body-sm text-body-sm border border-outline-variant">Heart Failure</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-body-sm text-body-sm border border-outline-variant">Hypertension</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-body-sm text-body-sm border border-outline-variant">Echocardiography</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-body-sm text-body-sm border border-outline-variant">Arrhythmias</span>
+</div>
+</div>
+<!-- Working Hours -->
+<div class="bg-surface rounded-xl p-lg shadow-[0_4px_15px_rgba(0,0,0,0.04)] border border-outline-variant">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+                    Working Hours
+                </h2>
+<div class="space-y-sm">
+<div class="flex justify-between items-center py-sm border-b border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Monday - Friday</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">09:00 AM - 05:00 PM</span>
+</div>
+<div class="flex justify-between items-center py-sm border-b border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Saturday</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">10:00 AM - 02:00 PM</span>
+</div>
+<div class="flex justify-between items-center py-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Sunday</span>
+<span class="font-body-md text-body-md text-error bg-error-container/30 px-2 py-1 rounded">Closed</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Spacer for fixed bottom bar -->
+<div class="h-24 md:h-0"></div>
+</main>
+<!-- Fixed Bottom Action Bar (Mobile & Desktop Floating) -->
+<div class="fixed bottom-0 left-0 w-full z-40 bg-surface border-t border-outline-variant shadow-[0_-4px_15px_rgba(0,0,0,0.04)] p-margin-mobile md:bottom-lg md:left-1/2 md:-translate-x-1/2 md:w-auto md:rounded-full md:border md:shadow-[0_8px_30px_rgba(0,0,0,0.1)] md:px-lg md:py-md">
+<div class="flex items-center justify-between gap-lg md:gap-xl max-w-3xl mx-auto w-full">
+<div class="hidden md:flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Consultation Fee</span>
+<span class="font-headline-sm text-headline-sm text-primary">$150</span>
+</div>
+<button class="flex-1 md:flex-none w-full md:w-64 bg-primary text-on-primary py-3 px-6 rounded-lg font-headline-sm text-headline-sm shadow-md hover:bg-primary/90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                Book Appointment
+            </button>
+</div>
+</div>
+</body></html>

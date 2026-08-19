@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthCare - Booking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#0066ff",
+                        "on-tertiary-fixed-variant": "#43474b",
+                        "on-primary-fixed-variant": "#003fa4",
+                        "on-surface-variant": "#424656",
+                        "on-tertiary-container": "#f4f8fc",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#161c27",
+                        "outline": "#727687",
+                        "tertiary-fixed-dim": "#c3c7cb",
+                        "surface-container": "#e8eeff",
+                        "secondary-fixed-dim": "#76d6d5",
+                        "surface-variant": "#dde2f3",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#dae1ff",
+                        "surface-container-high": "#e3e8f9",
+                        "inverse-on-surface": "#ecf0ff",
+                        "primary-fixed-dim": "#b3c5ff",
+                        "tertiary": "#555a5d",
+                        "surface-tint": "#0054d6",
+                        "surface": "#f9f9ff",
+                        "on-tertiary-fixed": "#171c1f",
+                        "surface-bright": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#dfe3e7",
+                        "on-secondary-container": "#006e6e",
+                        "surface-container-highest": "#dde2f3",
+                        "inverse-primary": "#b3c5ff",
+                        "outline-variant": "#c2c6d8",
+                        "on-primary-fixed": "#001849",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#90efef",
+                        "surface-dim": "#d4daea",
+                        "secondary-fixed": "#93f2f2",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#002020",
+                        "tertiary-container": "#6d7276",
+                        "on-background": "#161c27",
+                        "on-secondary-fixed-variant": "#004f4f",
+                        "primary": "#0050cb",
+                        "secondary": "#006a6a",
+                        "surface-container-low": "#f1f3ff",
+                        "inverse-surface": "#2a303d",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#f8f7ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "3xl": "64px",
+                        "sm": "8px",
+                        "margin-desktop": "32px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "2xl": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-icon { font-variation-settings: 'FILL' 1; }
+        .card-shadow { box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.04); }
+        .hover-shadow:hover { box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Mobile TopAppBar -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile h-16 sticky top-0 z-50 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary text-2xl">menu</span>
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-primary">HealthCare</h1>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">person</span>
+</div>
+</header>
+<!-- Desktop NavigationDrawer -->
+<nav class="hidden md:flex flex-col h-full py-xl fixed left-0 top-0 w-[280px] bg-surface-bright border-r border-outline-variant z-40">
+<div class="px-lg pb-lg border-b border-outline-variant mb-md flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden flex items-center justify-center border border-outline-variant shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-2xl">person</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Dr. Clinical</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Medical Administrator</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-md space-y-sm">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Patients</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined fill-icon">event_note</span>
+<span class="font-body-md text-body-md">Schedules</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-body-md text-body-md">Consultations</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</div>
+<div class="px-md mt-auto pt-md border-t border-outline-variant">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-[280px] p-margin-mobile md:p-margin-desktop pb-[100px] md:pb-margin-desktop overflow-y-auto">
+<div class="max-w-[800px] mx-auto">
+<header class="mb-xl text-center md:text-left flex flex-col gap-sm">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-on-surface">Book Appointment</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Select a suitable date and time for your consultation.</p>
+</header>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg md:p-xl card-shadow mb-lg">
+<!-- Doctor Info Compact -->
+<div class="flex items-center gap-lg mb-xl pb-lg border-b border-outline-variant">
+<img class="w-16 h-16 rounded-full object-cover border-2 border-surface-variant" data-alt="A professional headshot of a female doctor wearing a white clinical coat and a stethoscope around her neck, standing in a bright, modern, minimalist clinic with soft natural lighting and a clean white aesthetic. Calm and competent expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkkFyIGH0LjqUi05_5WPSvGTSS8zNu2GInbkOqpmDE2WcS8epDDVK94OXOrNsZmF7NvDt5WTmafEmJ9pcUxX5xkPtyw_YTqCAcw-huM1ak2zl6JbYMLTLPI7MWDAg9qL8HOxWpqtqzLNcJT1X1UlRL8nv4YzneM8H2LLFwcpbNfazCx-9iCeXJps7Zmb30xRniTtgADLc9zx3_Yj9Mh55Zk-H3nLsEEy2PGgk_LNDZPq4Y79Z4eA3q0w"/>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Dr. Sarah Jenkins</h3>
+<p class="font-body-sm text-body-sm text-primary">Cardiologist</p>
+</div>
+</div>
+<!-- Date Selection -->
+<section class="mb-xl">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">October 2023</h3>
+<div class="flex gap-sm">
+<button class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Date Picker -->
+<div class="flex gap-md overflow-x-auto pb-sm snap-x hide-scrollbar" style="scrollbar-width: none;">
+<!-- Past/Unavailable -->
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg border border-outline-variant bg-surface-container opacity-50 cursor-not-allowed snap-start shrink-0">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Mon</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface-variant">16</span>
+</div>
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg border border-outline-variant bg-surface-container opacity-50 cursor-not-allowed snap-start shrink-0">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Tue</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface-variant">17</span>
+</div>
+<!-- Available -->
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary hover:text-primary cursor-pointer transition-colors snap-start shrink-0 hover-shadow group">
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary uppercase">Wed</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">18</span>
+</div>
+<!-- Selected -->
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg bg-primary border-2 border-primary text-on-primary shadow-md cursor-pointer snap-start shrink-0">
+<span class="font-label-md text-label-md text-primary-fixed uppercase">Thu</span>
+<span class="font-headline-md text-headline-md font-bold text-on-primary">19</span>
+</div>
+<!-- Available -->
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary hover:text-primary cursor-pointer transition-colors snap-start shrink-0 hover-shadow group">
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary uppercase">Fri</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">20</span>
+</div>
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg border border-outline-variant bg-surface-container-lowest hover:border-primary hover:text-primary cursor-pointer transition-colors snap-start shrink-0 hover-shadow group">
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-primary uppercase">Sat</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface">21</span>
+</div>
+<div class="min-w-[70px] flex flex-col items-center p-sm rounded-lg border border-outline-variant bg-surface-container opacity-50 cursor-not-allowed snap-start shrink-0">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Sun</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface-variant">22</span>
+</div>
+</div>
+</section>
+<!-- Time Selection -->
+<section>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-md">Available Time</h3>
+<div class="space-y-lg">
+<!-- Morning -->
+<div>
+<div class="flex items-center gap-sm mb-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">wb_sunny</span>
+<span class="font-label-md text-label-md uppercase">Morning</span>
+</div>
+<div class="grid grid-cols-3 sm:grid-cols-4 gap-md">
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">09:00</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">09:30</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface-variant bg-surface-container opacity-50 cursor-not-allowed line-through">10:00</button>
+<button class="py-sm px-md rounded-lg bg-primary-container text-on-primary-container font-body-md text-body-md font-medium border border-primary shadow-sm">10:30</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">11:00</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">11:30</button>
+</div>
+</div>
+<!-- Afternoon -->
+<div>
+<div class="flex items-center gap-sm mb-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">routine</span>
+<span class="font-label-md text-label-md uppercase">Afternoon</span>
+</div>
+<div class="grid grid-cols-3 sm:grid-cols-4 gap-md">
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">13:00</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface-variant bg-surface-container opacity-50 cursor-not-allowed line-through">13:30</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">14:00</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">14:30</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface hover:border-primary hover:text-primary transition-all hover-shadow bg-surface-container-lowest">15:00</button>
+<button class="py-sm px-md rounded-lg border border-outline-variant font-body-md text-body-md text-on-surface-variant bg-surface-container opacity-50 cursor-not-allowed line-through">15:30</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Action Area -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-lg bg-surface-container-low p-md md:p-lg rounded-xl border border-outline-variant">
+<div class="text-center sm:text-left">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase">Selected Appointment</p>
+<p class="font-headline-sm text-headline-sm font-bold text-on-surface">Thu, 19 Oct • 10:30 AM</p>
+</div>
+<button class="w-full sm:w-auto bg-primary text-on-primary font-body-md text-body-md font-semibold py-sm px-xl rounded-lg hover:bg-surface-tint transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                    Confirm Appointment
+                </button>
+</div>
+</div>
+</main>
+<!-- Mobile BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface border-t border-outline-variant shadow-[0_-4px_15px_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary w-16" href="#">
+<span class="material-symbols-outlined mb-xs">home</span>
+<span class="font-label-md text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 w-20" href="#">
+<span class="material-symbols-outlined fill-icon mb-xs">calendar_month</span>
+<span class="font-label-md text-[10px] font-bold">Booking</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary w-16" href="#">
+<span class="material-symbols-outlined mb-xs">description</span>
+<span class="font-label-md text-[10px]">Records</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary w-16" href="#">
+<span class="material-symbols-outlined mb-xs">chat</span>
+<span class="font-label-md text-[10px]">Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary w-16" href="#">
+<span class="material-symbols-outlined mb-xs">person</span>
+<span class="font-label-md text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

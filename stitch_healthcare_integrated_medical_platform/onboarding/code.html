@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthCare - Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#90efef",
+                      "inverse-primary": "#b3c5ff",
+                      "surface-dim": "#d4daea",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#dde2f3",
+                      "primary-fixed-dim": "#b3c5ff",
+                      "error-container": "#ffdad6",
+                      "surface-tint": "#0054d6",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#76d6d5",
+                      "on-surface-variant": "#424656",
+                      "on-surface": "#161c27",
+                      "primary": "#0050cb",
+                      "on-tertiary-fixed": "#171c1f",
+                      "on-secondary-container": "#006e6e",
+                      "surface-container-low": "#f1f3ff",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#dde2f3",
+                      "primary-container": "#0066ff",
+                      "on-secondary-fixed": "#002020",
+                      "on-tertiary-container": "#f4f8fc",
+                      "tertiary": "#555a5d",
+                      "on-primary": "#ffffff",
+                      "surface-container-high": "#e3e8f9",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed": "#dae1ff",
+                      "on-secondary-fixed-variant": "#004f4f",
+                      "inverse-surface": "#2a303d",
+                      "surface-bright": "#f9f9ff",
+                      "on-background": "#161c27",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#ecf0ff",
+                      "secondary-fixed": "#93f2f2",
+                      "on-error": "#ffffff",
+                      "outline": "#727687",
+                      "surface": "#f9f9ff",
+                      "surface-container": "#e8eeff",
+                      "on-primary-container": "#f8f7ff",
+                      "on-primary-fixed-variant": "#003fa4",
+                      "outline-variant": "#c2c6d8",
+                      "background": "#f9f9ff",
+                      "tertiary-container": "#6d7276",
+                      "on-tertiary-fixed-variant": "#43474b",
+                      "secondary": "#006a6a",
+                      "tertiary-fixed": "#dfe3e7",
+                      "on-primary-fixed": "#001849",
+                      "tertiary-fixed-dim": "#c3c7cb"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "gutter": "24px",
+                      "xl": "32px",
+                      "2xl": "48px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "3xl": "64px",
+                      "base": "8px",
+                      "md": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px",
+                      "xs": "4px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #f9f9ff;
+            color: #161c27;
+        }
+        .ambient-shadow {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col items-center justify-center p-margin-mobile">
+<!-- Onboarding Container -->
+<main class="w-full max-w-[400px] bg-surface-container-lowest rounded-xl border border-outline-variant ambient-shadow flex flex-col h-[800px] max-h-[795px] overflow-hidden">
+<!-- Top Bar with Skip -->
+<header class="flex justify-between items-center p-md">
+<span class="font-headline-md text-headline-md font-bold text-primary">HealthCare</span>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors">Skip</button>
+</header>
+<!-- Illustration Area -->
+<div class="flex-grow flex items-center justify-center p-lg relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-auto object-contain max-h-full drop-shadow-lg relative z-10 rounded-lg" data-alt="A high-quality, modern, minimalist flat vector illustration of a friendly female doctor in a white coat with a stethoscope, smiling and looking approachable. The background is a soft, abstract blend of primary blue and light gray shapes, conveying a clean, clinical, yet warm and trusting atmosphere suitable for a premium healthcare app. The lighting is bright and cheerful." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOnot3ThXICtVPBXv3zZXwfreosEnrNOybYK6PNPCi3AQGIqGGN2yeIdF7EdXeFLRx0ZvsDSiFDavbTFmEy3l01OVroIkB9jgY-Z4gVgsFMz2FBzF-iyO8LLPvcV3XfD5fe0SVcrVUIjOORWcwkr87aD_oir29-zJv_4ApXVNxoZSLNxNSbYpk9__RoxG4qlB89lKa0Cl4OnP10jrm514R37YliGsZSu5gLwWZ9F9tMUHSy3A2wZDqHQ"/>
+<!-- Decorative background elements -->
+<div class="absolute w-48 h-48 bg-primary-container/10 rounded-full top-10 -right-10 blur-xl"></div>
+<div class="absolute w-32 h-32 bg-secondary-container/20 rounded-full bottom-10 -left-10 blur-lg"></div>
+</div>
+<!-- Content Area -->
+<div class="p-lg flex flex-col gap-md bg-surface-container-lowest rounded-t-xl -mt-4 relative z-20 shadow-[0_-4px_15px_rgba(0,0,0,0.04)]">
+<!-- Progress Indicators -->
+<div class="flex justify-center gap-sm mb-sm">
+<div class="w-8 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-surface-variant"></div>
+<div class="w-2 h-2 rounded-full bg-surface-variant"></div>
+</div>
+<div class="text-center">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-sm">Find the Best Doctors</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Book appointments and consult with top-rated specialists at your convenience.</p>
+</div>
+<!-- Action Button -->
+<button class="w-full mt-lg bg-primary text-on-primary font-body-md text-body-md font-semibold py-md rounded-lg shadow-md hover:bg-primary-container hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-sm">
+                Next
+                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</main>
+</body></html>

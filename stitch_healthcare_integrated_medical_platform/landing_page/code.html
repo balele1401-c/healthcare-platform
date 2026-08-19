@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthCare - Your Health, Our Priority</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-secondary-fixed-variant": "#004f4f",
+                            "background": "#f9f9ff",
+                            "on-error": "#ffffff",
+                            "on-primary": "#ffffff",
+                            "surface-tint": "#0054d6",
+                            "on-tertiary": "#ffffff",
+                            "tertiary-fixed-dim": "#c3c7cb",
+                            "surface-bright": "#f9f9ff",
+                            "surface-container": "#e8eeff",
+                            "secondary-container": "#90efef",
+                            "on-tertiary-container": "#f4f8fc",
+                            "on-error-container": "#93000a",
+                            "primary-container": "#0066ff",
+                            "tertiary-container": "#6d7276",
+                            "surface-variant": "#dde2f3",
+                            "on-secondary": "#ffffff",
+                            "surface-container-lowest": "#ffffff",
+                            "error": "#ba1a1a",
+                            "secondary-fixed": "#93f2f2",
+                            "error-container": "#ffdad6",
+                            "inverse-surface": "#2a303d",
+                            "secondary-fixed-dim": "#76d6d5",
+                            "on-tertiary-fixed-variant": "#43474b",
+                            "primary-fixed": "#dae1ff",
+                            "primary-fixed-dim": "#b3c5ff",
+                            "inverse-on-surface": "#ecf0ff",
+                            "surface": "#f9f9ff",
+                            "on-secondary-fixed": "#002020",
+                            "tertiary-fixed": "#dfe3e7",
+                            "on-primary-fixed-variant": "#003fa4",
+                            "outline": "#727687",
+                            "on-surface-variant": "#424656",
+                            "on-background": "#161c27",
+                            "secondary": "#006a6a",
+                            "on-secondary-container": "#006e6e",
+                            "tertiary": "#555a5d",
+                            "surface-dim": "#d4daea",
+                            "on-surface": "#161c27",
+                            "outline-variant": "#c2c6d8",
+                            "on-primary-fixed": "#001849",
+                            "primary": "#0050cb",
+                            "on-primary-container": "#f8f7ff",
+                            "inverse-primary": "#b3c5ff",
+                            "surface-container-low": "#f1f3ff",
+                            "surface-container-high": "#e3e8f9",
+                            "on-tertiary-fixed": "#171c1f",
+                            "surface-container-highest": "#dde2f3"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "md": "16px",
+                            "sm": "8px",
+                            "xs": "4px",
+                            "3xl": "64px",
+                            "margin-mobile": "16px",
+                            "base": "8px",
+                            "container-max": "1440px",
+                            "lg": "24px",
+                            "2xl": "48px",
+                            "xl": "32px",
+                            "gutter": "24px",
+                            "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                            "headline-md": ["Inter"],
+                            "headline-sm": ["Inter"],
+                            "label-md": ["Inter"],
+                            "body-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "display-lg": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                            "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                            "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                            "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .clinical-shadow {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+        .clinical-shadow-hover:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 sticky top-0 z-50">
+<div class="flex items-center gap-md">
+<button class="md:hidden text-primary dark:text-inverse-primary hover:bg-surface-container-high transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">HealthCare</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-lg">
+<a class="font-label-md text-label-md text-primary font-bold" href="#">Home</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#services">Services</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#doctors">Doctors</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#about">About</a>
+</nav>
+<div class="flex items-center gap-md hover:bg-surface-container-high transition-colors p-2 rounded-full cursor-pointer">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">account_circle</span>
+<span class="hidden md:block font-label-md text-label-md text-on-surface">User Profile</span>
+</div>
+</header>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-surface-container-low py-3xl px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-2xl items-center relative z-10">
+<div class="space-y-xl">
+<h1 class="font-display-lg text-display-lg text-on-surface md:pr-xl">Your Health, Our Priority</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                        Experience world-class medical care with our dedicated team of professionals. We leverage advanced technology and compassionate care to ensure your well-being.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-md">
+<button class="bg-primary text-on-primary px-lg py-md rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-md">
+                            Book an Appointment
+                        </button>
+<button class="bg-surface text-primary border border-primary px-lg py-md rounded-lg font-label-md text-label-md hover:bg-surface-container transition-colors">
+                            Learn More
+                        </button>
+</div>
+</div>
+<div class="relative h-[400px] lg:h-[600px] rounded-xl overflow-hidden clinical-shadow">
+<img class="w-full h-full object-cover rounded-xl" data-alt="A brightly lit, modern hospital corridor with a female doctor in a pristine white coat looking confidently towards the camera. The setting exudes clinical clarity, with soft, diffused white lighting, subtle blue accents on the walls, and a sense of calm professionalism. The aesthetic is clean, minimalist, and highly trustworthy, reflecting a top-tier healthcare environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaIxgKJnAuuiF6NTurGOwDZokCHpYE7mjVOkYzRWhC-47HtOjFF_kHuOnCJjZ_sqsiPZ5pXX4aZBvjpdkmI6AqFnb7DsByi54gBM7C4mfpd3ykNC86Ux-IgeaU5BpNk5xRdNu_OHAKuj-qLbZd1ST3j9Nfbg6JxWsDcf5-mouXHhs-Esw-uBO52cczUbJOz0-8Gf0H-YoIAH0KlsjQK9_S7B22EiNJcJ5KH1yrMwsIdsoTnAxjkQ3Ssg"/>
+</div>
+</div>
+<!-- Decorative Background Element -->
+<div class="absolute top-0 right-0 -mr-[20%] -mt-[10%] w-[60%] h-[120%] bg-primary-fixed opacity-30 rounded-full blur-3xl -z-0 pointer-events-none"></div>
+</section>
+<!-- Services Section (Bento Grid) -->
+<section class="py-3xl px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto" id="services">
+<div class="mb-2xl text-center">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-sm">Our Services</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Comprehensive healthcare solutions tailored to your needs.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Large Card -->
+<div class="md:col-span-2 bg-surface rounded-[16px] border border-outline-variant clinical-shadow clinical-shadow-hover p-xl flex flex-col justify-between transition-all duration-300">
+<div>
+<div class="w-12 h-12 bg-primary-container rounded-lg flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-on-primary-container">medical_services</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Primary Care</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Comprehensive health management, preventive care, and treatment for common illnesses by expert general practitioners.</p>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="bg-surface rounded-[16px] border border-outline-variant clinical-shadow clinical-shadow-hover p-xl transition-all duration-300">
+<div class="w-12 h-12 bg-secondary-container rounded-lg flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-on-secondary-container">monitor_heart</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Cardiology</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Advanced diagnostic and treatment services for heart conditions.</p>
+</div>
+<!-- Small Card 2 -->
+<div class="bg-surface rounded-[16px] border border-outline-variant clinical-shadow clinical-shadow-hover p-xl transition-all duration-300">
+<div class="w-12 h-12 bg-tertiary-container rounded-lg flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-on-tertiary-container">pediatrics</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Pediatrics</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Specialized care for infants, children, and adolescents.</p>
+</div>
+<!-- Medium Card -->
+<div class="md:col-span-2 bg-surface rounded-[16px] border border-outline-variant clinical-shadow clinical-shadow-hover p-xl flex flex-col md:flex-row gap-lg items-center transition-all duration-300">
+<div class="w-full md:w-1/3 h-48 rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-tech MRI machine in a pristine, minimalist diagnostic room. The room is bathed in cool, bright white and subtle primary blue lighting. The aesthetic emphasizes clinical precision, safety, and modern medical technology, aligning with a professional healthcare SaaS visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWv7me1VJcfq4atH9nAZOhwRDoStB1JUzGIeUV9nbew-_O4wFBgo1pneOUhAIorUJhI7A8GRZGO1zOWs7Hfh-xKxDda9ypwr7qkgIobalEumc3ushjTdqbJRSCN2O1uSe2_qx9gr_CQUt8VeIjHSyDRv3G5DTTqe-9obhyBVZ2FYIRXbn8tLsljUBsVhX5Hroe3SutRMZYracDAX8kSR4QZHxA1gSc3Dep0hdB2nb4gGK8OdLccVzWCA"/>
+</div>
+<div class="w-full md:w-2/3">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Advanced Diagnostics</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">State-of-the-art imaging and laboratory services for accurate and timely diagnoses, ensuring the best possible care pathways.</p>
+<a class="text-primary font-label-md text-label-md hover:underline flex items-center gap-xs" href="#">
+                            Explore Facilities <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Top Rated Doctors -->
+<section class="py-3xl bg-surface-container-lowest px-margin-mobile md:px-margin-desktop" id="doctors">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-2xl">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-sm">Top Rated Doctors</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Meet our team of experienced and highly recommended specialists.</p>
+</div>
+<a class="text-primary font-label-md text-label-md hover:underline mt-md md:mt-0" href="#">View All Doctors</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Doctor 1 -->
+<div class="bg-surface rounded-[16px] border border-outline-variant p-lg clinical-shadow clinical-shadow-hover text-center transition-all duration-300">
+<div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-md border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly male doctor in his 40s wearing a white coat and stethoscope. The background is a soft, out-of-focus clinical blue. Lighting is bright, soft, and flattering, emphasizing approachability and competence within a modern healthcare setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzqw-M9hyYS60qeTPNWKSgET4OX-CBLem2enuDadI1-hnQ95lfxCI22OxGJmFM9DBEvZUqu3uKRfOUcqfu64sM3n1J6jmJbVN_VL62BSGAZYXkMN1T3ItVfPr0I3Z1zJ5IcZIC8OyX4Qg27JVORqWo_cQHJrFuR8_KBuNxqaQjchD-xdWAuH-p-kJ9khnAAoRaN-q_jxIj9Y655VwPSfvg1N3K7EbPZhCi98wWAQqxzbTu1biTMf2eAg"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Dr. Sarah Jenkins</h3>
+<p class="font-body-sm text-body-sm text-primary mb-sm">Cardiologist</p>
+<div class="flex justify-center items-center gap-xs mb-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[16px]">star</span>
+<span class="font-label-md text-label-md">4.9 (120 reviews)</span>
+</div>
+<button class="w-full bg-surface-container text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors">
+                            Book
+                        </button>
+</div>
+<!-- Doctor 2 -->
+<div class="bg-surface rounded-[16px] border border-outline-variant p-lg clinical-shadow clinical-shadow-hover text-center transition-all duration-300">
+<div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-md border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a confident female pediatrician in her 30s. She is smiling warmly in a bright, modern clinic environment with subtle white and blue tones. The image conveys trust, clinical clarity, and a welcoming atmosphere for patients." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBshI0s3kEhqNYz6rlAn8tkEaGXBUiQLbe-LKKqnaziX4nU0471IJHe5m-MSHLglHgrsLx1GVVVLLuT1zA2ty43SBiaTlmHVkhr3X8aIZTEsv_0Gpl7gInn-Twd2FImxEAEOwwER6yQwL4LJcLiMtbPGknjYV6N7tjREmpfpCT1-q2z5QvSXYDvbHjeJGfZ88BEb1Mq-I39ZEq4RprjxHH5HjT1JiuubOHgOliG_G5DgFjNuRxuNBTLkw"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Dr. Michael Chen</h3>
+<p class="font-body-sm text-body-sm text-primary mb-sm">Pediatrician</p>
+<div class="flex justify-center items-center gap-xs mb-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[16px]">star</span>
+<span class="font-label-md text-label-md">4.8 (95 reviews)</span>
+</div>
+<button class="w-full bg-surface-container text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors">
+                            Book
+                        </button>
+</div>
+<!-- Doctor 3 & 4 Omitted for brevity, assuming standard repetition -->
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface dark:bg-inverse-surface shadow-[0_-4px_15px_rgba(0,0,0,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary" href="#services">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label-md text-label-md">Services</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary" href="#doctors">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Doctors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+</body></html>
