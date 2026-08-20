@@ -69,3 +69,5 @@ backend/storage/pail/
 backend/.phpunit.result.cache
 backend/.phpunit.cache/
 backend/database/database.sqlite
+
+.firebase/
