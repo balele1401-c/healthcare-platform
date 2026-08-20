@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Attach security headers globally
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         // Prepare global and API middleware stack
         $middleware->statefulApi();
         $middleware->redirectGuestsTo(function (Request $request) {

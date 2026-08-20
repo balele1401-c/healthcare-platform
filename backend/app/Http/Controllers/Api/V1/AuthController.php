@@ -25,9 +25,7 @@ class AuthController extends Controller
         $validated = $request->validated();
 
         $user = DB::transaction(function () use ($validated, $request) {
-            $userRole = isset($validated['role'])
-                ? UserRole::from($validated['role'])
-                : UserRole::PATIENT;
+            $userRole = UserRole::PATIENT;
 
             $user = User::create([
                 'name' => $validated['name'],
