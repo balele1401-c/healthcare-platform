@@ -118,7 +118,7 @@ class HealthMetricController extends Controller
      */
     public function update(UpdateHealthMetricRequest $request, HealthMetric $healthMetric): JsonResponse
     {
-        Gate::authorize('create', $healthMetric);
+        Gate::authorize('update', $healthMetric);
 
         $validated = $request->validated();
         $healthMetric->update(array_filter($validated, fn ($val) => $val !== null));

@@ -23,6 +23,7 @@ use App\Http\Controllers\Web\Doctor\DoctorPatientController;
 use App\Http\Controllers\Web\Doctor\DoctorPrescriptionController;
 use App\Http\Controllers\Web\Doctor\DoctorProfileController;
 use App\Http\Controllers\Web\Doctor\DoctorScheduleController;
+use App\Http\Controllers\Web\PublicWebsiteController;
 use App\Http\Controllers\Web\Staff\StaffActivityController;
 use App\Http\Controllers\Web\Staff\StaffAppointmentController;
 use App\Http\Controllers\Web\Staff\StaffAuthController;
@@ -40,16 +41,36 @@ use Illuminate\Support\Facades\Route;
 | Web Routes — HealthCare Integrated Medical Platform
 |--------------------------------------------------------------------------
 |
-| Dedicated Administrative, Doctor Clinical, and Staff Operations Web Portals.
+| 1. Public Marketing, Informational, and SEO Routes
+| 2. Administrative Operations Portal
+| 3. Doctor Clinical Workspace Portal
+| 4. Staff Operations Portal
 |
 */
 
-Route::get('/', [AdminAuthController::class, 'showLogin'])->name('home');
+/*
+|--------------------------------------------------------------------------
+| 1. Public Informational & SEO Website Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [PublicWebsiteController::class, 'home'])->name('public.home');
+Route::get('/about', [PublicWebsiteController::class, 'about'])->name('public.about');
+Route::get('/services', [PublicWebsiteController::class, 'services'])->name('public.services');
+Route::get('/doctors', [PublicWebsiteController::class, 'doctors'])->name('public.doctors');
+Route::get('/how-it-works', [PublicWebsiteController::class, 'howItWorks'])->name('public.how-it-works');
+Route::get('/contact', [PublicWebsiteController::class, 'contact'])->name('public.contact');
+Route::get('/faq', [PublicWebsiteController::class, 'faq'])->name('public.faq');
+Route::get('/privacy', [PublicWebsiteController::class, 'privacy'])->name('public.privacy');
+Route::get('/terms', [PublicWebsiteController::class, 'terms'])->name('public.terms');
+Route::get('/sitemap.xml', [PublicWebsiteController::class, 'sitemap'])->name('public.sitemap');
+Route::get('/robots.txt', [PublicWebsiteController::class, 'robots'])->name('public.robots');
+
+// Default fallback for legacy login redirect
 Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
 
 /*
 |--------------------------------------------------------------------------
-| 1. Admin Portal Routes
+| 2. Admin Portal Routes
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -104,7 +125,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| 2. Doctor Clinical Portal Routes
+| 3. Doctor Clinical Portal Routes
 |--------------------------------------------------------------------------
 */
 Route::prefix('doctor')->name('doctor.')->group(function () {
@@ -164,7 +185,7 @@ Route::prefix('doctor')->name('doctor.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| 3. Staff Operations Portal Routes
+| 4. Staff Operations Portal Routes
 |--------------------------------------------------------------------------
 */
 Route::prefix('staff')->name('staff.')->group(function () {

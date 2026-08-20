@@ -15,7 +15,7 @@ class NotificationController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = $request->user()->notifications()->latest();
+        $query = Notification::where('user_id', $request->user()->id)->latest();
 
         if ($request->has('read')) {
             $isRead = filter_var($request->query('read'), FILTER_VALIDATE_BOOLEAN);

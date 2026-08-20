@@ -123,7 +123,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Billing & Payment Invoices
         Route::prefix('payments')->name('payments.')->group(function () {
             Route::get('/', [PaymentController::class, 'index'])->name('index');
+            Route::post('/', [PaymentController::class, 'store'])->name('store');
             Route::get('/{payment}', [PaymentController::class, 'show'])->name('show');
+            Route::post('/{payment}/refund', [PaymentController::class, 'refund'])->name('refund');
         });
     });
+
+    // 5. Unauthenticated Payment Webhook Endpoint (Protected by Provider Signature)
+    Route::post('/payments/webhook/{provider}', [PaymentController::class, 'webhook'])->name('payments.webhook');
 });

@@ -138,7 +138,26 @@ class AppointmentController extends Controller
         Gate::authorize('update', $appointment);
 
         $validated = $request->validated();
+
+        if (isset($validated['status'])) {
+            $targetStatus = is_string($validated['status']) ? AppointmentStatus::from($validated['status']) : $validated['status'];
+            if (! $appointment->status->canTransitionTo($targetStatus)) {
+                return $this->errorResponse("Invalid appointment status transition from {$appointment->status->value} to {$targetStatus->value}.", 422);
+            }
+        }
+
         $appointment->update(array_filter($validated));
+
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'UPDATE_APPOINTMENT',
+            'entity_type' => 'Appointment',
+            'entity_id' => $appointment->id,
+            'new_data' => $validated,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'created_at' => now(),
+        ]);
 
         return $this->successResponse(
             new AppointmentResource($appointment->fresh(['doctor.specialty', 'doctor.user', 'patient.user'])),
@@ -153,12 +172,8 @@ class AppointmentController extends Controller
     {
         Gate::authorize('cancel', $appointment);
 
-        if ($appointment->status === AppointmentStatus::CANCELLED) {
-            return $this->errorResponse('This appointment is already cancelled.', 400);
-        }
-
-        if ($appointment->status === AppointmentStatus::COMPLETED) {
-            return $this->errorResponse('Completed appointments cannot be cancelled.', 400);
+        if (! $appointment->status->canTransitionTo(AppointmentStatus::CANCELLED)) {
+            return $this->errorResponse("Cannot cancel appointment with status [{$appointment->status->value}].", 400);
         }
 
         $validated = $request->validated();

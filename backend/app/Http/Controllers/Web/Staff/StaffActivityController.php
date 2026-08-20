@@ -20,9 +20,9 @@ class StaffActivityController extends Controller
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('action', 'ilike', "%{$search}%")
-                    ->orWhere('entity_type', 'ilike', "%{$search}%")
-                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'ilike', "%{$search}%"));
+                $q->where('action', 'like', "%{$search}%")
+                    ->orWhere('entity_type', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'like', "%{$search}%"));
             });
         }
 

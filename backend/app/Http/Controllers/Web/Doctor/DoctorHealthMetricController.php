@@ -25,7 +25,7 @@ class DoctorHealthMetricController extends Controller
 
         if (! empty($search)) {
             $query->whereHas('patient.user', function ($uq) use ($search) {
-                $uq->where('name', 'ilike', "%{$search}%");
+                $uq->where('name', 'like', "%{$search}%");
             });
         }
 

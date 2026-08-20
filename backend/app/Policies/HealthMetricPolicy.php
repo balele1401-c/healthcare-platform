@@ -20,7 +20,20 @@ class HealthMetricPolicy
         return false;
     }
 
-    public function create(User $user, HealthMetric $metric): bool
+    public function create(User $user, ?HealthMetric $metric = null): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if ($metric && $metric->patient) {
+            return $user->isPatient() && $metric->patient->user_id === $user->id;
+        }
+
+        return $user->isPatient();
+    }
+
+    public function update(User $user, HealthMetric $metric): bool
     {
         if ($user->isAdmin()) {
             return true;

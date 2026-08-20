@@ -28,9 +28,9 @@ class StaffAppointmentController extends Controller
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('booking_code', 'ilike', "%{$search}%")
-                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'ilike', "%{$search}%"))
-                    ->orWhereHas('doctor.user', fn ($dq) => $dq->where('name', 'ilike', "%{$search}%"));
+                $q->where('booking_code', 'like', "%{$search}%")
+                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('doctor.user', fn ($dq) => $dq->where('name', 'like', "%{$search}%"));
             });
         }
 

@@ -29,9 +29,9 @@ class DoctorMedicalRecordController extends Controller
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('record_number', 'ilike', "%{$search}%")
-                    ->orWhere('diagnosis', 'ilike', "%{$search}%")
-                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'ilike', "%{$search}%"));
+                $q->where('record_number', 'like', "%{$search}%")
+                    ->orWhere('diagnosis', 'like', "%{$search}%")
+                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'like', "%{$search}%"));
             });
         }
 

@@ -31,8 +31,8 @@ class DoctorPrescriptionController extends Controller
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('prescription_code', 'ilike', "%{$search}%")
-                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'ilike', "%{$search}%"));
+                $q->where('prescription_code', 'like', "%{$search}%")
+                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'like', "%{$search}%"));
             });
         }
 

@@ -28,9 +28,9 @@ class StaffPatientController extends Controller
 
         if (! empty($search)) {
             $query->whereHas('user', function ($uq) use ($search) {
-                $uq->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "%{$search}%")
-                    ->orWhere('phone', 'ilike', "%{$search}%");
+                $uq->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 

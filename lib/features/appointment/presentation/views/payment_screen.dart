@@ -116,7 +116,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Payment',
+          'Payment & Checkout',
           style: AppTypography.titleLarge.copyWith(
             color: AppColors.onSurface,
             fontWeight: FontWeight.w700,
@@ -131,6 +131,49 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 0. Sandbox / Readiness Transparency Banner
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              margin: const EdgeInsets.only(bottom: AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.primaryContainer.withValues(alpha: 0.25),
+                borderRadius: AppRadius.radiusMd,
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 20),
+                  AppSpacing.gapHSm,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Demonstration & Sandbox Mode',
+                          style: AppTypography.titleMd.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        AppSpacing.gapVXs,
+                        Text(
+                          'Payment gateway integration is operating in sandbox readiness mode pending financial institution onboarding. No live funds will be debited.',
+                          style: AppTypography.bodySm.copyWith(
+                            color: AppColors.onSurfaceVariant,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             // 1. Amount Payable Card
             Container(
               width: double.infinity,
@@ -144,7 +187,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 borderRadius: AppRadius.radiusLg,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -155,7 +198,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 children: [
                   Text(
                     'Total Payment Due',
-                    style: AppTypography.bodySm.copyWith(color: AppColors.onPrimary.withOpacity(0.85)),
+                    style: AppTypography.bodySm.copyWith(color: AppColors.onPrimary.withValues(alpha: 0.85)),
                   ),
                   AppSpacing.gapVSm,
                   Text(
@@ -173,7 +216,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                       AppSpacing.gapHXs,
                       Text(
                         'Secure 256-Bit Encrypted Healthcare Checkout',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.onPrimary.withOpacity(0.9)),
+                        style: AppTypography.labelSm.copyWith(color: AppColors.onPrimary.withValues(alpha: 0.9)),
                       ),
                     ],
                   ),
@@ -238,7 +281,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: AppColors.primaryFixedDim.withOpacity(0.3),
+                                        color: AppColors.primaryFixedDim.withValues(alpha: 0.3),
                                         borderRadius: AppRadius.radiusXs,
                                       ),
                                       child: Text(
@@ -261,17 +304,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                             ],
                           ),
                         ),
-                        Radio<String>(
-                          value: method['id'] as String,
-                          groupValue: _selectedMethod,
-                          activeColor: AppColors.primary,
-                          onChanged: (val) {
-                            if (val != null) {
-                              setState(() {
-                                _selectedMethod = val;
-                              });
-                            }
-                          },
+                        Icon(
+                          isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                          color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
                         ),
                       ],
                     ),
@@ -314,7 +349,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           color: AppColors.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               offset: const Offset(0, -4),
               blurRadius: 10,
             ),

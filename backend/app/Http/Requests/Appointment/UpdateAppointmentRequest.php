@@ -17,6 +17,7 @@ class UpdateAppointmentRequest extends FormRequest
             'appointment_date' => ['nullable', 'date', 'after_or_equal:today'],
             'appointment_time' => ['nullable', 'date_format:H:i,H:i:s'],
             'doctor_schedule_id' => ['nullable', 'exists:doctor_schedules,id'],
+            'status' => ['nullable', 'string', 'in:pending,confirmed,in_consultation,completed,cancelled,rejected,expired'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

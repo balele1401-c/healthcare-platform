@@ -21,9 +21,9 @@ class StaffPaymentController extends Controller
 
         if (! empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('payment_reference', 'ilike', "%{$search}%")
-                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'ilike', "%{$search}%"))
-                    ->orWhereHas('appointment', fn ($aq) => $aq->where('booking_code', 'ilike', "%{$search}%"));
+                $q->where('payment_reference', 'like', "%{$search}%")
+                    ->orWhereHas('patient.user', fn ($pq) => $pq->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('appointment', fn ($aq) => $aq->where('booking_code', 'like', "%{$search}%"));
             });
         }
 
