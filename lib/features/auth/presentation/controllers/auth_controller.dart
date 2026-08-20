@@ -148,6 +148,35 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
+  Future<bool> signInWithGoogle() async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    try {
+      final user = await _repository.signInWithGoogle();
+      if (user == null) {
+        // User closed or cancelled the account picker
+        state = state.copyWith(status: AuthStatus.unauthenticated);
+        return false;
+      }
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: user,
+      );
+      return true;
+    } on Failure catch (f) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: f.message,
+      );
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: 'An unexpected error occurred during Google Sign-In.',
+      );
+      return false;
+    }
+  }
+
   Future<bool> sendForgotPasswordOtp({required String identifier}) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {

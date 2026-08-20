@@ -11,7 +11,7 @@ import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error.dart';
-import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/app_skeleton.dart';
 import '../../domain/models/prescription_model.dart';
 import '../controllers/prescription_controller.dart';
 
@@ -27,29 +27,39 @@ class PrescriptionsScreen extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: AppColors.surface,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
-            onPressed: () => Navigator.pop(context),
-          ),
+          scrolledUnderElevation: 0.5,
+          leading: Navigator.canPop(context)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null,
           title: Text(
-            'Prescriptions & Medications',
+            'Prescriptions & Pharmacy',
             style: AppTypography.titleLarge.copyWith(
               color: AppColors.onSurface,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          bottom: TabBar(
-            indicatorColor: AppColors.primary,
-            indicatorWeight: 3,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.onSurfaceVariant,
-            labelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
-            unselectedLabelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w500),
-            tabs: const [
-              Tab(text: 'Active'),
-              Tab(text: 'Completed'),
-              Tab(text: 'Expired'),
-            ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(48),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
+              color: AppColors.surface,
+              child: TabBar(
+                indicatorColor: AppColors.primary,
+                indicatorWeight: 3,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.onSurfaceVariant,
+                labelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700, fontSize: 14),
+                unselectedLabelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w500, fontSize: 14),
+                tabs: const [
+                  Tab(text: 'Active Rx'),
+                  Tab(text: 'Completed'),
+                  Tab(text: 'Expired'),
+                ],
+              ),
+            ),
           ),
         ),
         body: const TabBarView(
@@ -77,129 +87,174 @@ class _PrescriptionTabList extends ConsumerWidget {
             ? ref.watch(completedPrescriptionsProvider)
             : ref.watch(expiredPrescriptionsProvider);
 
-    return prescriptionsAsync.when(
-      data: (prescriptions) {
-        if (prescriptions.isEmpty) {
-          return AppEmptyState(
-            icon: Icons.medication_outlined,
-            title: 'No ${status.label} Prescriptions',
-            message: 'You have no ${status.label.toLowerCase()} digital medication orders.',
-          );
-        }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 900;
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(activePrescriptionsProvider);
-            ref.invalidate(completedPrescriptionsProvider);
-            ref.invalidate(expiredPrescriptionsProvider);
-          },
-          child: ListView.separated(
-            padding: const EdgeInsets.all(AppSpacing.marginMobile),
-            itemCount: prescriptions.length,
-            separatorBuilder: (_, __) => AppSpacing.gapVMd,
-            itemBuilder: (context, index) {
-              final rx = prescriptions[index];
-              final dateFormatted = DateFormat('MMM d, yyyy').format(rx.issuedDate);
-              final validUntilFormatted = DateFormat('MMM d, yyyy').format(rx.validUntil);
+        return prescriptionsAsync.when(
+          data: (prescriptions) {
+            if (prescriptions.isEmpty) {
+              return Center(
+                child: AppEmptyState(
+                  icon: Icons.medication_outlined,
+                  title: 'No ${status.label} Prescriptions',
+                  message: 'You have no ${status.label.toLowerCase()} digital medication orders on file.',
+                ),
+              );
+            }
 
-              return AppCard(
-                onTap: () => context.push(AppRoutes.prescriptionDetail, extra: rx),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(activePrescriptionsProvider);
+                ref.invalidate(completedPrescriptionsProvider);
+                ref.invalidate(expiredPrescriptionsProvider);
+              },
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 860),
+                  child: ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+                      vertical: AppSpacing.lg,
+                    ),
+                    itemCount: prescriptions.length,
+                    separatorBuilder: (context, index) => AppSpacing.gapVMd,
+                    itemBuilder: (context, index) {
+                      final rx = prescriptions[index];
+                      final validUntilFormatted = DateFormat('MMM d, yyyy').format(rx.validUntil);
+
+                      return AppCard(
+                        onTap: () => context.push(AppRoutes.prescriptionDetail, extra: rx),
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(AppSpacing.xs),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryFixed,
-                                borderRadius: AppRadius.radiusSm,
-                              ),
-                              child: const Icon(Icons.medication_outlined, size: 20, color: AppColors.primary),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryContainer,
+                                        borderRadius: AppRadius.radiusSm,
+                                      ),
+                                      child: const Icon(Icons.medication_outlined, size: 20, color: AppColors.primary),
+                                    ),
+                                    AppSpacing.gapHSm,
+                                    Text(
+                                      'Rx Order #${rx.id}',
+                                      style: AppTypography.titleMedium.copyWith(
+                                        color: AppColors.onSurface,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                AppBadge(
+                                  text: rx.status.label,
+                                  variant: rx.status == PrescriptionStatus.active
+                                      ? BadgeVariant.success
+                                      : rx.status == PrescriptionStatus.completed
+                                          ? BadgeVariant.primary
+                                          : BadgeVariant.error,
+                                ),
+                              ],
                             ),
-                            AppSpacing.gapHSm,
-                            Text(
-                              rx.id,
-                              style: AppTypography.titleMedium.copyWith(
-                                color: AppColors.onSurface,
-                                fontWeight: FontWeight.w700,
+                            AppSpacing.gapVMd,
+
+                            // Medicines summary
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: rx.items.map((item) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 6),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppColors.secondary),
+                                      AppSpacing.gapHSm,
+                                      Expanded(
+                                        child: Text(
+                                          '${item.medicineName} ${item.dosage}',
+                                          style: AppTypography.bodySm.copyWith(
+                                            color: AppColors.onSurface,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        'Qty: ${item.totalQuantity}',
+                                        style: AppTypography.labelSm.copyWith(
+                                          color: AppColors.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            AppSpacing.gapVMd,
+
+                            // Footer info strip
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceContainerLow,
+                                borderRadius: AppRadius.radiusMd,
+                                border: Border.all(color: AppColors.outlineVariant, width: 0.8),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Dr. ${rx.doctorName}',
+                                    style: AppTypography.labelSm.copyWith(
+                                      color: AppColors.onSurface,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Valid until: $validUntilFormatted',
+                                    style: AppTypography.labelSm.copyWith(
+                                      color: AppColors.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        AppBadge(
-                          text: rx.status.label,
-                          variant: rx.status == PrescriptionStatus.active
-                              ? BadgeVariant.success
-                              : rx.status == PrescriptionStatus.completed
-                                  ? BadgeVariant.primary
-                                  : BadgeVariant.error,
-                        ),
-                      ],
-                    ),
-                    AppSpacing.gapVMd,
-
-                    // Medicines summary
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: rx.items.map((item) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppColors.primary),
-                              AppSpacing.gapHSm,
-                              Expanded(
-                                child: Text(
-                                  '${item.medicineName} ${item.dosage}',
-                                  style: AppTypography.bodyMd.copyWith(
-                                    color: AppColors.onSurface,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    AppSpacing.gapVSm,
-                    Text(
-                      'Prescribing Doctor: ${rx.doctorName} (${rx.doctorSpecialty})',
-                      style: AppTypography.bodySm.copyWith(color: AppColors.onSurfaceVariant),
-                    ),
-                    AppSpacing.gapVSm,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Issued: $dateFormatted • Valid until: $validUntilFormatted',
-                          style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
-                        ),
-                        const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.outline),
-                      ],
-                    ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
+              ),
+            );
+          },
+          loading: () => Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 860),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.marginMobile),
+                itemCount: 3,
+                separatorBuilder: (context, index) => AppSpacing.gapVMd,
+                itemBuilder: (context, index) => const AppSkeleton(width: double.infinity, height: 160),
+              ),
+            ),
+          ),
+          error: (err, _) => Center(
+            child: AppError(
+              message: 'Failed to load prescriptions.',
+              onRetry: () {
+                ref.invalidate(activePrescriptionsProvider);
+                ref.invalidate(completedPrescriptionsProvider);
+                ref.invalidate(expiredPrescriptionsProvider);
+              },
+            ),
           ),
         );
       },
-      loading: () => const Center(child: AppLoading(message: 'Loading prescriptions...')),
-      error: (err, _) => Center(
-        child: AppError(
-          message: 'Failed to load prescriptions.',
-          onRetry: () {
-            ref.invalidate(activePrescriptionsProvider);
-            ref.invalidate(completedPrescriptionsProvider);
-            ref.invalidate(expiredPrescriptionsProvider);
-          },
-        ),
-      ),
     );
   }
 }

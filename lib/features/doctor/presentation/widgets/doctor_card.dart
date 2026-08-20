@@ -24,17 +24,38 @@ class DoctorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: () => context.push(AppRoutes.doctorDetail, extra: doctor),
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Doctor Info Header
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppAvatar(
-                name: doctor.name,
-                imageUrl: doctor.avatarUrl,
-                size: 56,
+              Stack(
+                children: [
+                  AppAvatar(
+                    name: doctor.name,
+                    imageUrl: doctor.avatarUrl,
+                    size: 54,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.verified_rounded,
+                        size: 16,
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               AppSpacing.gapHMd,
               Expanded(
@@ -43,14 +64,13 @@ class DoctorCard extends StatelessWidget {
                   children: [
                     Text(
                       doctor.name,
-                      style: AppTypography.titleLg.copyWith(
+                      style: AppTypography.titleMedium.copyWith(
                         color: AppColors.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    AppSpacing.gapVXs,
                     Text(
                       doctor.specialty,
                       style: AppTypography.bodySm.copyWith(
@@ -60,10 +80,9 @@ class DoctorCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    AppSpacing.gapVXs,
                     Text(
                       doctor.clinicName,
-                      style: AppTypography.bodySm.copyWith(
+                      style: AppTypography.labelSm.copyWith(
                         color: AppColors.onSurfaceVariant,
                       ),
                       maxLines: 1,
@@ -76,12 +95,13 @@ class DoctorCard extends StatelessWidget {
           ),
           AppSpacing.gapVMd,
 
-          // Stats Chips Row
+          // Stats Chips Row (Tonal Surface)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 8),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLow,
               borderRadius: AppRadius.radiusMd,
+              border: Border.all(color: AppColors.outlineVariant, width: 0.8),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,8 +109,8 @@ class DoctorCard extends StatelessWidget {
                 // Rating
                 Row(
                   children: [
-                    const Icon(Icons.star_rounded, size: 18, color: Color(0xFFFFB300)),
-                    AppSpacing.gapHXs,
+                    const Icon(Icons.star_rounded, size: 16, color: Color(0xFFF59E0B)),
+                    const SizedBox(width: 4),
                     Text(
                       '${doctor.rating}',
                       style: AppTypography.labelMd.copyWith(
@@ -104,28 +124,43 @@ class DoctorCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Container(width: 1, height: 16, color: AppColors.outlineVariant),
+                Container(width: 1, height: 14, color: AppColors.outlineVariant),
 
                 // Experience
                 Row(
                   children: [
-                    const Icon(Icons.work_outline_rounded, size: 16, color: AppColors.primary),
-                    AppSpacing.gapHXs,
+                    const Icon(Icons.medical_services_outlined, size: 15, color: AppColors.onSurfaceVariant),
+                    const SizedBox(width: 4),
                     Text(
                       '${doctor.experienceYears} yrs exp',
-                      style: AppTypography.labelMd.copyWith(color: AppColors.onSurfaceVariant),
+                      style: AppTypography.labelSm.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
-                Container(width: 1, height: 16, color: AppColors.outlineVariant),
+                Container(width: 1, height: 14, color: AppColors.outlineVariant),
 
                 // Fee
-                Text(
-                  '\$${doctor.consultationFee.toStringAsFixed(0)}',
-                  style: AppTypography.titleMd.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '\$${doctor.consultationFee.toStringAsFixed(0)}',
+                      style: AppTypography.titleMedium.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      ' / visit',
+                      style: AppTypography.labelSm.copyWith(
+                        color: AppColors.onSurfaceMuted,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -144,27 +179,35 @@ class DoctorCard extends StatelessWidget {
                 )
               else
                 const AppBadge(
-                  text: 'Next: Tomorrow',
-                  variant: BadgeVariant.secondary,
-                  icon: Icons.calendar_today_rounded,
+                  text: 'Next Slot: Tomorrow',
+                  variant: BadgeVariant.neutral,
+                  icon: Icons.schedule_rounded,
                 ),
-              InkWell(
-                onTap: onBookPressed ?? () => context.push(AppRoutes.doctorDetail, extra: doctor),
-                borderRadius: AppRadius.radiusBase,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Book Visit',
-                        style: AppTypography.labelMd.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.primary),
-                    ],
+              ElevatedButton(
+                onPressed: onBookPressed ?? () => context.push(AppRoutes.doctorDetail, extra: doctor),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: AppRadius.radiusBase,
                   ),
+                  minimumSize: const Size(0, 34),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Book Visit',
+                      style: AppTypography.labelMd.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white),
+                  ],
                 ),
               ),
             ],

@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
@@ -26,30 +28,30 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     {
       'id': 'card',
       'title': 'Credit / Debit Card',
-      'subtitle': 'Visa, Mastercard, Amex (•••• 4242)',
+      'subtitle': 'Visa, Mastercard, American Express',
       'icon': Icons.credit_card_rounded,
       'badge': 'Instant',
     },
     {
       'id': 'va',
       'title': 'Bank Virtual Account',
-      'subtitle': 'BCA, Mandiri, BNI, BRI, Chase',
+      'subtitle': 'Automatic clinical settlement',
       'icon': Icons.account_balance_rounded,
-      'badge': 'Auto-Verify',
+      'badge': 'Automated',
     },
     {
       'id': 'ewallet',
-      'title': 'E-Wallet / Instant Pay',
-      'subtitle': 'Apple Pay, Google Pay, QRIS',
+      'title': 'Apple Pay / Google Pay / QRIS',
+      'subtitle': 'One-tap biometric checkout',
       'icon': Icons.qr_code_scanner_rounded,
       'badge': 'Fastest',
     },
     {
-      'id': 'transfer',
-      'title': 'Manual Bank Transfer',
-      'subtitle': 'Direct deposit with proof of payment',
-      'icon': Icons.receipt_long_rounded,
-      'badge': null,
+      'id': 'insurance',
+      'title': 'Health Insurance Direct Billing',
+      'subtitle': 'Pre-approved corporate policy claims',
+      'icon': Icons.health_and_safety_rounded,
+      'badge': 'Direct Claim',
     },
   ];
 
@@ -95,7 +97,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         setState(() {
           _isProcessing = false;
         });
-        AppSnackbar.showError(context, 'Payment failed. Please try again.');
+        AppSnackbar.showError(context, 'Payment processing failed. Please try again.');
       }
     }
   }
@@ -111,256 +113,208 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
+        scrolledUnderElevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Payment & Checkout',
+          'Secure Checkout',
           style: AppTypography.titleLarge.copyWith(
             color: AppColors.onSurface,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.marginMobile,
-          vertical: AppSpacing.md,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 0. Sandbox / Readiness Transparency Banner
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.md),
-              margin: const EdgeInsets.only(bottom: AppSpacing.md),
-              decoration: BoxDecoration(
-                color: AppColors.primaryContainer.withValues(alpha: 0.25),
-                borderRadius: AppRadius.radiusMd,
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 20),
-                  AppSpacing.gapHSm,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Demonstration & Sandbox Mode',
-                          style: AppTypography.titleMd.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        AppSpacing.gapVXs,
-                        Text(
-                          'Payment gateway integration is operating in sandbox readiness mode pending financial institution onboarding. No live funds will be debited.',
-                          style: AppTypography.bodySm.copyWith(
-                            color: AppColors.onSurfaceVariant,
-                            height: 1.3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 900;
 
-            // 1. Amount Payable Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, Color(0xFF003FA4)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: AppRadius.radiusLg,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Total Payment Due',
-                    style: AppTypography.bodySm.copyWith(color: AppColors.onPrimary.withValues(alpha: 0.85)),
-                  ),
-                  AppSpacing.gapVSm,
-                  Text(
-                    '\$${totalAmount.toStringAsFixed(2)}',
-                    style: AppTypography.displayLarge.copyWith(
-                      color: AppColors.onPrimary,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 34,
-                    ),
-                  ),
-                  AppSpacing.gapVSm,
-                  Row(
-                    children: [
-                      const Icon(Icons.verified_user_rounded, color: AppColors.onPrimary, size: 16),
-                      AppSpacing.gapHXs,
-                      Text(
-                        'Secure 256-Bit Encrypted Healthcare Checkout',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.onPrimary.withValues(alpha: 0.9)),
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+              vertical: AppSpacing.lg,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 860),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Amount Payable Hero Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0F172A), Color(0xFF1E3A8A)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: AppRadius.radiusLg,
+                        boxShadow: AppShadows.elevated,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            AppSpacing.gapVLg,
-
-            // 2. Payment Method Selector
-            Text(
-              'Select Payment Method',
-              style: AppTypography.headlineSm.copyWith(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            Column(
-              children: _paymentMethods.map((method) {
-                final isSelected = _selectedMethod == method['id'];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                  child: AppCard(
-                    onTap: () {
-                      setState(() {
-                        _selectedMethod = method['id'];
-                      });
-                    },
-                    hasBorder: true,
-                    borderRadius: AppRadius.radiusMd,
-                    backgroundColor: isSelected ? AppColors.surfaceContainerLow : AppColors.surfaceContainerLowest,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(AppSpacing.sm),
-                          decoration: BoxDecoration(
-                            color: isSelected ? AppColors.primaryFixed : AppColors.surfaceContainerHigh,
-                            borderRadius: AppRadius.radiusSm,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'TOTAL HEALTHCARE CONSULTATION DUE',
+                            style: AppTypography.labelSm.copyWith(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
+                            ),
                           ),
-                          child: Icon(
-                            method['icon'] as IconData,
-                            color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
-                            size: 24,
+                          AppSpacing.gapVSm,
+                          Text(
+                            '\$${totalAmount.toStringAsFixed(2)}',
+                            style: AppTypography.displayLarge.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 38,
+                            ),
                           ),
-                        ),
-                        AppSpacing.gapHMd,
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          AppSpacing.gapVMd,
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    method['title'] as String,
-                                    style: AppTypography.titleMedium.copyWith(
-                                      color: AppColors.onSurface,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  if (method['badge'] != null) ...[
-                                    AppSpacing.gapHSm,
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primaryFixedDim.withValues(alpha: 0.3),
-                                        borderRadius: AppRadius.radiusXs,
-                                      ),
-                                      child: Text(
-                                        method['badge'] as String,
-                                        style: AppTypography.labelSm.copyWith(
-                                          color: AppColors.primary,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                              AppSpacing.gapVXs,
+                              const Icon(Icons.lock_rounded, color: AppColors.secondaryLight, size: 16),
+                              AppSpacing.gapHXs,
                               Text(
-                                method['subtitle'] as String,
-                                style: AppTypography.bodySm.copyWith(color: AppColors.onSurfaceVariant),
+                                '256-Bit SSL Encrypted Healthcare Payment Gateway',
+                                style: AppTypography.labelSm.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        Icon(
-                          isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-                          color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-            AppSpacing.gapVLg,
+                    AppSpacing.gapVLg,
 
-            // 3. Security Notice
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLow,
-                borderRadius: AppRadius.radiusMd,
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.shield_outlined, color: AppColors.primary, size: 22),
-                  AppSpacing.gapHMd,
-                  Expanded(
-                    child: Text(
-                      'Your clinical consultation and payment details are strictly HIPAA compliant and protected.',
-                      style: AppTypography.bodySm.copyWith(color: AppColors.onSurfaceVariant),
+                    // 2. Payment Method Selector
+                    Text(
+                      'Select Payment Method',
+                      style: AppTypography.titleLarge.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                ],
+                    AppSpacing.gapVSm,
+                    Column(
+                      children: _paymentMethods.map((method) {
+                        final isSelected = _selectedMethod == method['id'];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                          child: AppCard(
+                            onTap: () {
+                              setState(() {
+                                _selectedMethod = method['id'];
+                              });
+                            },
+                            padding: const EdgeInsets.all(AppSpacing.md),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? AppColors.primaryContainer : AppColors.surfaceContainerLow,
+                                    borderRadius: AppRadius.radiusMd,
+                                  ),
+                                  child: Icon(
+                                    method['icon'] as IconData,
+                                    color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
+                                    size: 24,
+                                  ),
+                                ),
+                                AppSpacing.gapHMd,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            method['title'] as String,
+                                            style: AppTypography.titleMedium.copyWith(
+                                              color: AppColors.onSurface,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          if (method['badge'] != null) ...[
+                                            const SizedBox(width: 8),
+                                            AppBadge(
+                                              text: method['badge'] as String,
+                                              variant: BadgeVariant.success,
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                      AppSpacing.gapVXs,
+                                      Text(
+                                        method['subtitle'] as String,
+                                        style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: 22,
+                                  height: 22,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isSelected ? AppColors.primary : Colors.transparent,
+                                    border: Border.all(
+                                      color: isSelected ? AppColors.primary : AppColors.outline,
+                                      width: isSelected ? 0 : 1.5,
+                                    ),
+                                  ),
+                                  child: isSelected
+                                      ? const Center(
+                                          child: Icon(Icons.check_rounded, color: Colors.white, size: 14),
+                                        )
+                                      : null,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    AppSpacing.gapVXxl,
+                  ],
+                ),
               ),
             ),
-            AppSpacing.gapV2Xl,
-          ],
-        ),
+          );
+        },
       ),
+
+      // 3. Fixed Bottom Pay Bar
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.marginMobile,
           vertical: AppSpacing.md,
         ),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              offset: const Offset(0, -4),
-              blurRadius: 10,
-            ),
-          ],
+          border: Border(
+            top: BorderSide(color: AppColors.outlineVariant, width: 0.8),
+          ),
+          boxShadow: AppShadows.bottomNav,
         ),
         child: SafeArea(
-          child: AppButton(
-            text: 'Pay Now \$${totalAmount.toStringAsFixed(2)}',
-            isLoading: _isProcessing,
-            prefixIcon: Icons.payment_rounded,
-            onPressed: _handlePayment,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 860),
+              child: AppButton(
+                text: 'Pay \$${totalAmount.toStringAsFixed(2)} & Confirm',
+                isLoading: _isProcessing,
+                prefixIcon: Icons.lock_outline_rounded,
+                onPressed: _isProcessing ? null : _handlePayment,
+              ),
+            ),
           ),
         ),
       ),

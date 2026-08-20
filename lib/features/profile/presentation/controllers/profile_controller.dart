@@ -173,6 +173,17 @@ class PatientProfileNotifier extends StateNotifier<PatientProfileState> {
     }
   }
 
+  void syncFromUser(dynamic user) {
+    if (user == null) return;
+    state = state.copyWith(
+      id: user.id.toString().isNotEmpty ? user.id.toString() : state.id,
+      fullName: user.name != null && user.name.toString().isNotEmpty ? user.name.toString() : state.fullName,
+      email: user.email != null && user.email.toString().isNotEmpty ? user.email.toString() : state.email,
+      phoneNumber: user.phoneNumber ?? state.phoneNumber,
+      avatarUrl: user.avatarUrl ?? state.avatarUrl,
+    );
+  }
+
   void togglePushNotifications(bool val) {
     state = state.copyWith(pushNotificationsEnabled: val);
   }

@@ -29,16 +29,16 @@ class AppEmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(
-                color: AppColors.surfaceContainerHigh,
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.primaryContainer.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
-                color: AppColors.outline,
-                size: 36,
+                color: AppColors.primary,
+                size: 40,
               ),
             ),
             AppSpacing.gapVMd,
@@ -59,6 +59,7 @@ class AppEmptyState extends StatelessWidget {
                 text: actionText!,
                 onPressed: onAction,
                 isFullWidth: false,
+                variant: ButtonVariant.outlined,
               ),
             ],
           ],

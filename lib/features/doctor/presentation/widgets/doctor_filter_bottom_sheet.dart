@@ -129,7 +129,7 @@ class _DoctorFilterBottomSheetState extends ConsumerState<DoctorFilterBottomShee
               }).toList(),
             ),
             loading: () => const SizedBox(height: 40),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (err, stack) => const SizedBox.shrink(),
           ),
           AppSpacing.gapVLg,
 

@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_divider.dart';
@@ -14,6 +16,7 @@ import '../../../../shared/widgets/app_password_field.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
 import '../../../../shared/widgets/app_text_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
+import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../controllers/auth_controller.dart';
 
 class PatientLoginScreen extends ConsumerStatefulWidget {
@@ -27,6 +30,7 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController(text: 'sarah.jenkins@example.com');
   final _passwordController = TextEditingController(text: 'Password123!');
+  bool _isGoogleSigningIn = false;
 
   @override
   void dispose() {
@@ -59,141 +63,360 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleLogin() async {
+    setState(() => _isGoogleSigningIn = true);
+
+    final authController = ref.read(authControllerProvider.notifier);
+    final success = await authController.signInWithGoogle();
+
+    if (!mounted) return;
+    setState(() => _isGoogleSigningIn = false);
+
+    if (success) {
+      final user = ref.read(authControllerProvider).user;
+      if (user != null) {
+        ref.read(patientProfileProvider.notifier).syncFromUser(user);
+        if (!user.isHealthProfileCompleted) {
+          context.go(AppRoutes.createHealthProfile);
+        } else {
+          context.go(AppRoutes.home);
+        }
+      } else {
+        context.go(AppRoutes.home);
+      }
+    } else {
+      final errorMessage = ref.read(authControllerProvider).errorMessage;
+      if (errorMessage != null && errorMessage.isNotEmpty) {
+        AppSnackbar.showError(context, errorMessage);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
-
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: AppSpacing.paddingScreenAll,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 960) {
+            return _buildDesktopLayout(context);
+          }
+          return _buildMobileLayout(context);
+        },
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Row(
+      children: [
+        // Left Branding & Healthcare Credibility Hero Panel
+        Expanded(
+          flex: 6,
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF0F172A), Color(0xFF1E3A8A)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 48),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const AppLogo(iconSize: 48, fontSize: 26),
-                  AppSpacing.gapVXl,
-                  AppCard(
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                  // Top Logo
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: AppRadius.radiusMd,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                        ),
+                        child: const Icon(Icons.health_and_safety_rounded, color: Colors.white, size: 28),
+                      ),
+                      AppSpacing.gapHMd,
+                      Text(
+                        'HealthCare Enterprise',
+                        style: AppTypography.titleLarge.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Middle Value Proposition
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const AppBadge(
+                        text: 'CLINICAL PLATFORM 3.0',
+                        variant: BadgeVariant.secondary,
+                        icon: Icons.verified_user_rounded,
+                      ),
+                      AppSpacing.gapVMd,
+                      Text(
+                        'Integrated Patient Care & Telemedicine Portal',
+                        style: AppTypography.displayLarge.copyWith(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w800,
+                          height: 1.15,
+                          letterSpacing: -1.0,
+                        ),
+                      ),
+                      AppSpacing.gapVMd,
+                      Text(
+                        'Access verified specialists, real-time lab records, prescription deliveries, and AI triage guidance in one HIPAA-compliant platform.',
+                        style: AppTypography.bodyLg.copyWith(
+                          color: const Color(0xFF94A3B8),
+                          height: 1.5,
+                        ),
+                      ),
+                      AppSpacing.gapVXl,
+
+                      // Trust Features Grid
+                      Row(
                         children: [
-                          Text(
-                            'Welcome Back',
-                            style: AppTypography.headlineSm.copyWith(
-                              color: AppColors.onSurface,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          _buildTrustFeature(
+                            icon: Icons.lock_outline_rounded,
+                            title: 'HIPAA & FHIR',
+                            subtitle: 'Enterprise Security',
                           ),
-                          AppSpacing.gapVXs,
-                          Text(
-                            'Please sign in to access your healthcare portal.',
-                            style: AppTypography.bodySm.copyWith(
-                              color: AppColors.onSurfaceVariant,
-                            ),
+                          AppSpacing.gapHXl,
+                          _buildTrustFeature(
+                            icon: Icons.videocam_outlined,
+                            title: 'HD Telehealth',
+                            subtitle: 'End-to-End Encrypted',
                           ),
-                          AppSpacing.gapVLg,
-
-                          // Email field
-                          AppTextField(
-                            label: 'Email Address',
-                            hintText: 'name@example.com',
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: Validators.validateEmail,
-                            prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20, color: AppColors.outline),
-                          ),
-                          AppSpacing.gapVMd,
-
-                          // Password field
-                          AppPasswordField(
-                            label: 'Password',
-                            controller: _passwordController,
-                            validator: Validators.validatePassword,
-                          ),
-                          AppSpacing.gapVSm,
-
-                          // Forgot Password link
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: AppTextButton(
-                              text: 'Forgot Password?',
-                              onPressed: () => context.push(AppRoutes.forgotPassword),
-                            ),
-                          ),
-                          AppSpacing.gapVLg,
-
-                          // Sign In CTA
-                          AppButton(
-                            text: 'Sign In',
-                            isLoading: authState.isLoading,
-                            onPressed: _handleLogin,
-                          ),
-
-                          // Divider
-                          const AppDivider(text: 'OR CONTINUE WITH'),
-
-                          // Social Login Grid
-                          Row(
-                            children: [
-                              Expanded(
-                                child: AppButton(
-                                  text: 'Google',
-                                  variant: ButtonVariant.outlined,
-                                  prefixIcon: Icons.g_mobiledata_rounded,
-                                  onPressed: () {
-                                    AppSnackbar.showInfo(context, 'Google Sign-In is simulated in mock mode.');
-                                    _emailController.text = 'sarah.google@example.com';
-                                    _passwordController.text = 'GoogleAuth123!';
-                                  },
-                                ),
-                              ),
-                              AppSpacing.gapHMd,
-                              Expanded(
-                                child: AppButton(
-                                  text: 'Apple',
-                                  variant: ButtonVariant.outlined,
-                                  prefixIcon: Icons.apple_rounded,
-                                  onPressed: () {
-                                    AppSnackbar.showInfo(context, 'Apple Sign-In is simulated in mock mode.');
-                                    _emailController.text = 'sarah.apple@example.com';
-                                    _passwordController.text = 'AppleAuth123!';
-                                  },
-                                ),
-                              ),
-                            ],
+                          AppSpacing.gapHXl,
+                          _buildTrustFeature(
+                            icon: Icons.auto_awesome_rounded,
+                            title: 'Clinical AI',
+                            subtitle: 'Instant Triage',
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  AppSpacing.gapVLg,
-
-                  // Register link
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account? ",
-                        style: AppTypography.bodyMd.copyWith(color: AppColors.onSurfaceVariant),
-                      ),
-                      AppTextButton(
-                        text: 'Create an account',
-                        onPressed: () => context.push(AppRoutes.register),
-                      ),
                     ],
+                  ),
+
+                  // Bottom Accreditation Footer
+                  Text(
+                    '© 2026 HealthCare Platform Inc. Verified Medical Network.',
+                    style: AppTypography.labelSm.copyWith(
+                      color: const Color(0xFF64748B),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
         ),
+
+        // Right Authentication Form Area
+        Expanded(
+          flex: 5,
+          child: Container(
+            color: AppColors.surface,
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: _buildLoginForm(context),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTrustFeature({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: AppRadius.radiusMd,
+          ),
+          child: Icon(icon, color: AppColors.secondaryLight, size: 20),
+        ),
+        AppSpacing.gapHSm,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppTypography.labelMd.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: AppTypography.labelSm.copyWith(
+                color: const Color(0xFF94A3B8),
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: SingleChildScrollView(
+          padding: AppSpacing.paddingScreenAll,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const AppLogo(iconSize: 44, fontSize: 24),
+                AppSpacing.gapVXl,
+                AppCard(
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  child: _buildLoginForm(context),
+                ),
+                AppSpacing.gapVLg,
+                _buildRegisterLink(context),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildLoginForm(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Welcome Back',
+            style: AppTypography.headlineSm.copyWith(
+              color: AppColors.onSurface,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          AppSpacing.gapVXs,
+          Text(
+            'Sign in to access your clinical dashboard and medical records.',
+            style: AppTypography.bodySm.copyWith(
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+          AppSpacing.gapVLg,
+
+          AppTextField(
+            label: 'Email Address',
+            hintText: 'name@example.com',
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            validator: Validators.validateEmail,
+            prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20, color: AppColors.outline),
+          ),
+          AppSpacing.gapVMd,
+
+          AppPasswordField(
+            label: 'Password',
+            controller: _passwordController,
+            validator: Validators.validatePassword,
+          ),
+          AppSpacing.gapVSm,
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: AppTextButton(
+              text: 'Forgot Password?',
+              onPressed: () => context.push(AppRoutes.forgotPassword),
+            ),
+          ),
+          AppSpacing.gapVLg,
+
+          AppButton(
+            text: 'Sign In',
+            isLoading: authState.isLoading,
+            onPressed: _handleLogin,
+          ),
+
+          const AppDivider(text: 'OR SIGN IN WITH'),
+
+          Row(
+            children: [
+              Expanded(
+                child: AppButton(
+                  text: 'Google',
+                  variant: ButtonVariant.outlined,
+                  prefixIcon: Icons.g_mobiledata_rounded,
+                  isLoading: _isGoogleSigningIn,
+                  onPressed: (authState.isLoading || _isGoogleSigningIn)
+                      ? null
+                      : _handleGoogleLogin,
+                ),
+              ),
+              AppSpacing.gapHMd,
+              Expanded(
+                child: AppButton(
+                  text: 'Apple',
+                  variant: ButtonVariant.outlined,
+                  prefixIcon: Icons.apple_rounded,
+                  onPressed: (authState.isLoading || _isGoogleSigningIn)
+                      ? null
+                      : () {
+                          AppSnackbar.showInfo(context, 'Apple Sign-In is simulated in mock mode.');
+                          _emailController.text = 'sarah.apple@example.com';
+                          _passwordController.text = 'AppleAuth123!';
+                        },
+                ),
+              ),
+            ],
+          ),
+
+          if (MediaQuery.of(context).size.width >= 960) ...[
+            AppSpacing.gapVXl,
+            _buildRegisterLink(context),
+          ]
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRegisterLink(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text(
+          "Don't have an account? ",
+          style: AppTypography.bodyMd.copyWith(color: AppColors.onSurfaceVariant),
+        ),
+        AppTextButton(
+          text: 'Create an account',
+          onPressed: () => context.push(AppRoutes.register),
+        ),
+      ],
     );
   }
 }

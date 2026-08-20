@@ -41,7 +41,7 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(createWidgetUnderTest());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('Google'), findsOneWidget);
       expect(find.text('Apple'), findsOneWidget);

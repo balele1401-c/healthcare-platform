@@ -10,9 +10,10 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/app_avatar.dart';
 import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error.dart';
-import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/app_skeleton.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
 import '../../domain/models/appointment_model.dart';
 import '../controllers/appointment_controller.dart';
@@ -29,32 +30,42 @@ class MyAppointmentsScreen extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: AppColors.surface,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
-            onPressed: () => Navigator.pop(context),
-          ),
+          scrolledUnderElevation: 0.5,
+          leading: Navigator.canPop(context)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null,
           title: Text(
-            'My Appointments',
+            'My Clinical Visits',
             style: AppTypography.titleLarge.copyWith(
               color: AppColors.onSurface,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          bottom: TabBar(
-            indicatorColor: AppColors.primary,
-            indicatorWeight: 3,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.onSurfaceVariant,
-            labelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
-            unselectedLabelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w500),
-            tabs: const [
-              Tab(text: 'Upcoming'),
-              Tab(text: 'Completed'),
-              Tab(text: 'Cancelled'),
-            ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(48),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
+              color: AppColors.surface,
+              child: TabBar(
+                indicatorColor: AppColors.primary,
+                indicatorWeight: 3,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.onSurfaceVariant,
+                labelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700, fontSize: 14),
+                unselectedLabelStyle: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w500, fontSize: 14),
+                tabs: const [
+                  Tab(text: 'Upcoming'),
+                  Tab(text: 'Completed'),
+                  Tab(text: 'Cancelled'),
+                ],
+              ),
+            ),
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             _AppointmentTabList(status: AppointmentStatus.upcoming),
             _AppointmentTabList(status: AppointmentStatus.completed),
@@ -79,48 +90,74 @@ class _AppointmentTabList extends ConsumerWidget {
             ? ref.watch(completedAppointmentsProvider)
             : ref.watch(cancelledAppointmentsProvider);
 
-    return appointmentsAsync.when(
-      data: (appointments) {
-        if (appointments.isEmpty) {
-          return AppEmptyState(
-            icon: Icons.calendar_today_outlined,
-            title: 'No ${status.label} Appointments',
-            message: status == AppointmentStatus.upcoming
-                ? 'You do not have any upcoming visits scheduled.'
-                : 'No ${status.label.toLowerCase()} appointments on record.',
-            actionText: status == AppointmentStatus.upcoming ? 'Book Appointment' : null,
-            onAction: status == AppointmentStatus.upcoming ? () => context.push(AppRoutes.doctorSearch) : null,
-          );
-        }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 900;
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(upcomingAppointmentsProvider);
-            ref.invalidate(completedAppointmentsProvider);
-            ref.invalidate(cancelledAppointmentsProvider);
+        return appointmentsAsync.when(
+          data: (appointments) {
+            if (appointments.isEmpty) {
+              return Center(
+                child: AppEmptyState(
+                  icon: Icons.calendar_today_outlined,
+                  title: 'No ${status.label} Visits',
+                  message: status == AppointmentStatus.upcoming
+                      ? 'You do not have any upcoming doctor appointments scheduled.'
+                      : 'No ${status.label.toLowerCase()} appointment records found.',
+                  actionText: status == AppointmentStatus.upcoming ? 'Book a Specialist' : null,
+                  onAction: status == AppointmentStatus.upcoming ? () => context.push(AppRoutes.doctorSearch) : null,
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(upcomingAppointmentsProvider);
+                ref.invalidate(completedAppointmentsProvider);
+                ref.invalidate(cancelledAppointmentsProvider);
+              },
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 860),
+                  child: ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+                      vertical: AppSpacing.lg,
+                    ),
+                    itemCount: appointments.length,
+                    separatorBuilder: (context, index) => AppSpacing.gapVMd,
+                    itemBuilder: (context, index) {
+                      final apt = appointments[index];
+                      return _AppointmentItemCard(appointment: apt);
+                    },
+                  ),
+                ),
+              ),
+            );
           },
-          child: ListView.separated(
-            padding: const EdgeInsets.all(AppSpacing.marginMobile),
-            itemCount: appointments.length,
-            separatorBuilder: (_, __) => AppSpacing.gapVMd,
-            itemBuilder: (context, index) {
-              final apt = appointments[index];
-              return _AppointmentItemCard(appointment: apt);
-            },
+          loading: () => Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 860),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.marginMobile),
+                itemCount: 3,
+                separatorBuilder: (context, index) => AppSpacing.gapVMd,
+                itemBuilder: (context, index) => const AppSkeleton(width: double.infinity, height: 160),
+              ),
+            ),
+          ),
+          error: (err, _) => Center(
+            child: AppError(
+              message: 'Failed to load appointments.',
+              onRetry: () {
+                ref.invalidate(upcomingAppointmentsProvider);
+                ref.invalidate(completedAppointmentsProvider);
+                ref.invalidate(cancelledAppointmentsProvider);
+              },
+            ),
           ),
         );
       },
-      loading: () => const Center(child: AppLoading(message: 'Loading appointments...')),
-      error: (err, _) => Center(
-        child: AppError(
-          message: 'Failed to load appointments.',
-          onRetry: () {
-            ref.invalidate(upcomingAppointmentsProvider);
-            ref.invalidate(completedAppointmentsProvider);
-            ref.invalidate(cancelledAppointmentsProvider);
-          },
-        ),
-      ),
     );
   }
 }
@@ -132,10 +169,11 @@ class _AppointmentItemCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dateFormatted = DateFormat('EEE, MMM d, yyyy').format(appointment.dateTime);
+    final dateFormatted = DateFormat('EEEE, MMM d, yyyy').format(appointment.dateTime);
 
     return AppCard(
       onTap: () => context.push(AppRoutes.appointmentDetail, extra: appointment),
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -160,9 +198,13 @@ class _AppointmentItemCard extends ConsumerWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    AppSpacing.gapVXs,
                     Text(
                       appointment.doctorSpecialty,
-                      style: AppTypography.bodySm.copyWith(color: AppColors.primary),
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Text(
                       appointment.clinicName,
@@ -187,32 +229,39 @@ class _AppointmentItemCard extends ConsumerWidget {
 
           // Schedule Banner
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 8),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLow,
               borderRadius: AppRadius.radiusMd,
+              border: Border.all(color: AppColors.outlineVariant, width: 0.8),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.primary),
-                    AppSpacing.gapHXs,
+                    const Icon(Icons.calendar_today_rounded, size: 15, color: AppColors.primary),
+                    AppSpacing.gapHSm,
                     Text(
                       dateFormatted,
-                      style: AppTypography.bodySm.copyWith(fontWeight: FontWeight.w600),
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
                 Container(width: 1, height: 16, color: AppColors.outlineVariant),
                 Row(
                   children: [
-                    const Icon(Icons.access_time_rounded, size: 16, color: AppColors.primary),
-                    AppSpacing.gapHXs,
+                    const Icon(Icons.access_time_rounded, size: 15, color: AppColors.primary),
+                    AppSpacing.gapHSm,
                     Text(
                       appointment.timeSlot,
-                      style: AppTypography.bodySm.copyWith(fontWeight: FontWeight.w600),
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -225,30 +274,20 @@ class _AppointmentItemCard extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.outlineVariant),
-                    shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusBase),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                  ),
+                child: AppButton(
+                  text: 'View Details',
+                  variant: ButtonVariant.outlined,
+                  height: 42,
                   onPressed: () => context.push(AppRoutes.appointmentDetail, extra: appointment),
-                  child: Text(
-                    'View Details',
-                    style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.w700),
-                  ),
                 ),
               ),
               if (appointment.status == AppointmentStatus.upcoming) ...[
                 AppSpacing.gapHMd,
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.onPrimary,
-                      shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusBase),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                    ),
+                  child: AppButton(
+                    text: appointment.consultationType == ConsultationType.videoCall ? 'Join Consultation' : 'Check In',
+                    height: 42,
+                    prefixIcon: appointment.consultationType == ConsultationType.videoCall ? Icons.video_call_rounded : Icons.check_circle_outline_rounded,
                     onPressed: () {
                       if (appointment.consultationType == ConsultationType.videoCall) {
                         AppSnackbar.showSuccess(context, 'Joining video room with ${appointment.doctorName}...');
@@ -256,13 +295,6 @@ class _AppointmentItemCard extends ConsumerWidget {
                         context.push(AppRoutes.appointmentDetail, extra: appointment);
                       }
                     },
-                    child: Text(
-                      appointment.consultationType == ConsultationType.videoCall ? 'Join Call' : 'Check In',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
                   ),
                 ),
               ],

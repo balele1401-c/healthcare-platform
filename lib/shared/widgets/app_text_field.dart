@@ -18,6 +18,7 @@ class AppTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final bool readOnly;
+  final bool enabled;
   final VoidCallback? onTap;
   final int maxLines;
   final List<TextInputFormatter>? inputFormatters;
@@ -38,6 +39,7 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.readOnly = false,
+    this.enabled = true,
     this.onTap,
     this.maxLines = 1,
     this.inputFormatters,
@@ -55,7 +57,7 @@ class AppTextField extends StatelessWidget {
           Text(
             label!,
             style: AppTypography.labelMd.copyWith(
-              color: AppColors.onSurfaceVariant,
+              color: enabled ? AppColors.onSurfaceVariant : AppColors.outline,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -70,18 +72,21 @@ class AppTextField extends StatelessWidget {
           onChanged: onChanged,
           onFieldSubmitted: onFieldSubmitted,
           readOnly: readOnly,
+          enabled: enabled,
           onTap: onTap,
           maxLines: maxLines,
           inputFormatters: inputFormatters,
           focusNode: focusNode,
-          style: AppTypography.bodyMd.copyWith(color: AppColors.onSurface),
+          style: AppTypography.bodyMd.copyWith(
+            color: enabled ? AppColors.onSurface : AppColors.outline,
+          ),
           decoration: InputDecoration(
             hintText: hintText,
             errorText: errorText,
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: AppColors.surfaceContainerLowest,
+            fillColor: enabled ? AppColors.surfaceContainerLowest : AppColors.surfaceContainer,
             contentPadding: AppSpacing.paddingInput,
             border: const OutlineInputBorder(
               borderRadius: AppRadius.radiusBase,
@@ -102,6 +107,10 @@ class AppTextField extends StatelessWidget {
             focusedErrorBorder: const OutlineInputBorder(
               borderRadius: AppRadius.radiusBase,
               borderSide: BorderSide(color: AppColors.error, width: 1.5),
+            ),
+            disabledBorder: const OutlineInputBorder(
+              borderRadius: AppRadius.radiusBase,
+              borderSide: BorderSide(color: AppColors.surfaceContainerHigh, width: 1),
             ),
           ),
         ),

@@ -1,84 +1,102 @@
 import 'package:flutter/material.dart';
 
-/// Design tokens for the "Clinical Clarity" design system.
-/// Extracted and verified from Google Stitch design export.
+/// Centralized Design Tokens for the Enterprise Healthcare Platform.
+/// Built for clinical clarity, high visual hierarchy, and SaaS-grade aesthetics.
 abstract class AppColors {
-  // Brand Primary Palette
-  static const Color primary = Color(0xFF0050CB);
-  static const Color primaryContainer = Color(0xFF0066FF);
+  // Brand Primary (Enterprise Medical Deep Blue / Indigo)
+  static const Color primary = Color(0xFF1E40AF); // Blue 800 - Authoritative, Trustworthy
+  static const Color primaryLight = Color(0xFF3B82F6); // Blue 500
+  static const Color primaryDark = Color(0xFF1E3A8A); // Blue 900
+  static const Color primaryContainer = Color(0xFFEFF6FF); // Blue 50
   static const Color onPrimary = Color(0xFFFFFFFF);
-  static const Color onPrimaryContainer = Color(0xFFF8F7FF);
-  static const Color primaryFixed = Color(0xFFDAE1FF);
-  static const Color primaryFixedDim = Color(0xFFB3C5FF);
-  static const Color onPrimaryFixed = Color(0xFF001849);
-  static const Color onPrimaryFixedVariant = Color(0xFF003FA4);
-  static const Color inversePrimary = Color(0xFFB3C5FF);
+  static const Color onPrimaryContainer = Color(0xFF1E3A8A);
+  static const Color primaryFixed = Color(0xFFDBEAFE);
+  static const Color primaryFixedDim = Color(0xFFBFDBFE);
+  static const Color onPrimaryFixed = Color(0xFF172554);
+  static const Color onPrimaryFixedVariant = Color(0xFF1E40AF);
+  static const Color inversePrimary = Color(0xFF93C5FD);
 
-  // Secondary Palette (Medical Teal)
-  static const Color secondary = Color(0xFF006A6A);
-  static const Color secondaryContainer = Color(0xFF90EFEF);
+  // Secondary Accent (Clinical Teal / Cyan - Medical Precision)
+  static const Color secondary = Color(0xFF0D9488); // Teal 600
+  static const Color secondaryLight = Color(0xFF14B8A6); // Teal 500
+  static const Color secondaryDark = Color(0xFF0F766E); // Teal 700
+  static const Color secondaryContainer = Color(0xFFF0FDFA); // Teal 50
   static const Color onSecondary = Color(0xFFFFFFFF);
-  static const Color onSecondaryContainer = Color(0xFF006E6E);
-  static const Color secondaryFixed = Color(0xFF93F2F2);
-  static const Color secondaryFixedDim = Color(0xFF76D6D5);
-  static const Color onSecondaryFixed = Color(0xFF002020);
-  static const Color onSecondaryFixedVariant = Color(0xFF004F4F);
+  static const Color onSecondaryContainer = Color(0xFF115E59);
+  static const Color secondaryFixed = Color(0xFFCCFBF1);
+  static const Color secondaryFixedDim = Color(0xFF99F6E4);
+  static const Color onSecondaryFixed = Color(0xFF042F2E);
+  static const Color onSecondaryFixedVariant = Color(0xFF0F766E);
 
-  // Tertiary Neutral Accent Palette
-  static const Color tertiary = Color(0xFF555A5D);
-  static const Color tertiaryContainer = Color(0xFF6D7276);
+  // Tertiary Accent (Sky Blue for Data & Analytics)
+  static const Color tertiary = Color(0xFF0284C7); // Sky 600
+  static const Color tertiaryContainer = Color(0xFFF0F9FF); // Sky 50
   static const Color onTertiary = Color(0xFFFFFFFF);
-  static const Color onTertiaryContainer = Color(0xFFF4F8FC);
-  static const Color tertiaryFixed = Color(0xFFDFE3E7);
-  static const Color tertiaryFixedDim = Color(0xFFC3C7CB);
-  static const Color onTertiaryFixed = Color(0xFF171C1F);
-  static const Color onTertiaryFixedVariant = Color(0xFF43474B);
+  static const Color onTertiaryContainer = Color(0xFF0369A1);
+  static const Color tertiaryFixed = Color(0xFFE0F2FE);
+  static const Color tertiaryFixedDim = Color(0xFFBAE6FD);
+  static const Color onTertiaryFixed = Color(0xFF082F49);
+  static const Color onTertiaryFixedVariant = Color(0xFF0369A1);
 
-  // Surface & Background Hierarchy
-  static const Color background = Color(0xFFF9F9FF);
-  static const Color onBackground = Color(0xFF161C27);
-  static const Color surface = Color(0xFFF9F9FF);
-  static const Color surfaceDim = Color(0xFFD4DAEA);
-  static const Color surfaceBright = Color(0xFFF9F9FF);
-  static const Color surfaceVariant = Color(0xFFDDE2F3);
-  static const Color onSurface = Color(0xFF161C27);
-  static const Color onSurfaceVariant = Color(0xFF424656);
-  static const Color inverseSurface = Color(0xFF2A303D);
-  static const Color inverseOnSurface = Color(0xFFECF0FF);
-  static const Color surfaceTint = Color(0xFF0054D6);
+  // Surfaces & Background Hierarchy (Slate Scale)
+  static const Color background = Color(0xFFF8FAFC); // Slate 50 - Ultra clean, calm clinical background
+  static const Color onBackground = Color(0xFF0F172A); // Slate 900 - Crisp high contrast
+  static const Color surface = Color(0xFFFFFFFF); // Pure white card surfaces
+  static const Color surfaceDim = Color(0xFFF1F5F9); // Slate 100 - Subdued surface
+  static const Color surfaceBright = Color(0xFFFFFFFF);
+  static const Color surfaceVariant = Color(0xFFF1F5F9); // Slate 100
+  static const Color onSurface = Color(0xFF0F172A); // Slate 900 - Primary text
+  static const Color onSurfaceVariant = Color(0xFF475569); // Slate 600 - Secondary text / labels
+  static const Color onSurfaceMuted = Color(0xFF94A3B8); // Slate 400 - Timestamps / helper metadata
+  static const Color inverseSurface = Color(0xFF0F172A);
+  static const Color inverseOnSurface = Color(0xFFF8FAFC);
+  static const Color surfaceTint = Color(0xFF1E40AF);
 
-  // Container Elevations
-  static const Color surfaceContainerLowest = Color(0xFFFFFFFF); // Card surfaces
-  static const Color surfaceContainerLow = Color(0xFFF1F3FF);
-  static const Color surfaceContainer = Color(0xFFE8EEFF);
-  static const Color surfaceContainerHigh = Color(0xFFE3E8F9);
-  static const Color surfaceContainerHighest = Color(0xFFDDE2F3);
+  // Tonal Container Elevations (Avoid pure flat whitespace)
+  static const Color surfaceContainerLowest = Color(0xFFFFFFFF);
+  static const Color surfaceContainerLow = Color(0xFFF8FAFC); // Slate 50
+  static const Color surfaceContainer = Color(0xFFF1F5F9); // Slate 100
+  static const Color surfaceContainerHigh = Color(0xFFE2E8F0); // Slate 200
+  static const Color surfaceContainerHighest = Color(0xFFCBD5E1); // Slate 300
 
-  // Outlines & Borders
-  static const Color outline = Color(0xFF727687);
-  static const Color outlineVariant = Color(0xFFC2C6D8);
+  // Hairline Outlines & Dividers
+  static const Color outline = Color(0xFF94A3B8); // Slate 400
+  static const Color outlineVariant = Color(0xFFE2E8F0); // Slate 200 - Hairline borders
+  static const Color outlineSubtle = Color(0xFFF1F5F9); // Slate 100 - Extra soft dividers
 
-  // Semantic States
-  static const Color error = Color(0xFFBA1A1A);
-  static const Color errorContainer = Color(0xFFFFDAD6);
+  // Semantic Feedback States
+  static const Color error = Color(0xFFE11D48); // Rose 600
+  static const Color errorContainer = Color(0xFFFFF1F2); // Rose 50
   static const Color onError = Color(0xFFFFFFFF);
-  static const Color onErrorContainer = Color(0xFF93000A);
+  static const Color onErrorContainer = Color(0xFF9F1239);
 
-  static const Color success = Color(0xFF107C41);
-  static const Color successContainer = Color(0xFFD1F2D9);
+  static const Color success = Color(0xFF059669); // Emerald 600
+  static const Color successContainer = Color(0xFFECFDF5); // Emerald 50
   static const Color onSuccess = Color(0xFFFFFFFF);
-  static const Color onSuccessContainer = Color(0xFF0B582E);
+  static const Color onSuccessContainer = Color(0xFF065F46);
 
-  static const Color warning = Color(0xFFB57500);
-  static const Color warningContainer = Color(0xFFFFF1CC);
+  static const Color warning = Color(0xFFD97706); // Amber 600
+  static const Color warningContainer = Color(0xFFFFFBEB); // Amber 50
   static const Color onWarning = Color(0xFFFFFFFF);
-  static const Color onWarningContainer = Color(0xFF7A4E00);
+  static const Color onWarningContainer = Color(0xFF92400E);
 
-  static const Color info = Color(0xFF0050CB);
-  static const Color infoContainer = Color(0xFFDAE1FF);
+  static const Color info = Color(0xFF0284C7); // Sky 600
+  static const Color infoContainer = Color(0xFFF0F9FF); // Sky 50
+  static const Color onInfo = Color(0xFFFFFFFF);
+  static const Color onInfoContainer = Color(0xFF075985);
 
-  // Transparent / Shimmer
+  // Utility Colors
   static const Color transparent = Colors.transparent;
-  static const Color shimmerBase = Color(0xFFE8EEFF);
-  static const Color shimmerHighlight = Color(0xFFF9F9FF);
+  static const Color shimmerBase = Color(0xFFE2E8F0);
+  static const Color shimmerHighlight = Color(0xFFF8FAFC);
+
+  // Status Chip Colors
+  static const Color statusActiveBg = Color(0xFFECFDF5);
+  static const Color statusActiveText = Color(0xFF047857);
+  static const Color statusPendingBg = Color(0xFFFFFBEB);
+  static const Color statusPendingText = Color(0xFFB45309);
+  static const Color statusUpcomingBg = Color(0xFFEFF6FF);
+  static const Color statusUpcomingText = Color(0xFF1D4ED8);
+  static const Color statusCancelledBg = Color(0xFFFFF1F2);
+  static const Color statusCancelledText = Color(0xFFBE123C);
 }

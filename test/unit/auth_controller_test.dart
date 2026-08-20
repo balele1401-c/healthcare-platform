@@ -45,6 +45,15 @@ void main() {
       expect(controller.state.errorMessage, isNotNull);
     });
 
+    test('signInWithGoogle updates state to authenticated on success', () async {
+      final success = await controller.signInWithGoogle();
+
+      expect(success, true);
+      expect(controller.state.status, AuthStatus.authenticated);
+      expect(controller.state.user?.name, 'Sarah Jenkins (Google)');
+      expect(controller.state.isAuthenticated, true);
+    });
+
     test('logout resets state to unauthenticated', () async {
       await controller.login(
         email: 'sarah.jenkins@example.com',

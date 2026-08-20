@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/app_avatar.dart';
@@ -95,289 +95,258 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
+        scrolledUnderElevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Edit Profile',
+          'Edit Profile Details',
           style: AppTypography.titleLarge.copyWith(
             color: AppColors.onSurface,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.marginMobile,
-          vertical: AppSpacing.md,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Avatar Update
-              Center(
-                child: Stack(
-                  children: [
-                    AppAvatar(
-                      name: profile.fullName,
-                      imageUrl: profile.avatarUrl,
-                      size: 88,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.camera_alt_rounded, color: AppColors.onPrimary, size: 16),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.gapVLg,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 900;
 
-              // 2. Personal Fields
-              Text(
-                'Personal Information',
-                style: AppTypography.headlineSm.copyWith(
-                  color: AppColors.onSurface,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              AppSpacing.gapVSm,
-              AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppTextField(
-                      controller: _nameController,
-                      label: 'Full Name',
-                      hintText: 'Sarah Jenkins',
-                      prefixIcon: const Icon(Icons.person_outline_rounded, size: 20, color: AppColors.onSurfaceVariant),
-                      validator: (val) => val == null || val.trim().isEmpty ? 'Name is required' : null,
-                    ),
-                    AppSpacing.gapVMd,
-                    AppTextField(
-                      controller: _phoneController,
-                      label: 'Phone Number',
-                      hintText: '+1 (555) 019-2834',
-                      prefixIcon: const Icon(Icons.phone_outlined, size: 20, color: AppColors.onSurfaceVariant),
-                      keyboardType: TextInputType.phone,
-                    ),
-                    AppSpacing.gapVMd,
-
-                    // Date of Birth Field
-                    Text(
-                      'Date of Birth',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    AppSpacing.gapVSm,
-                    GestureDetector(
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: _selectedDob,
-                          firstDate: DateTime(1930),
-                          lastDate: DateTime.now(),
-                        );
-                        if (picked != null) {
-                          setState(() {
-                            _selectedDob = picked;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLowest,
-                          borderRadius: AppRadius.radiusMd,
-                          border: Border.all(color: AppColors.outlineVariant),
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+              vertical: AppSpacing.lg,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 860),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. Avatar Card
+                      AppCard(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Center(
+                          child: Stack(
+                            children: [
+                              AppAvatar(
+                                name: profile.fullName,
+                                imageUrl: profile.avatarUrl,
+                                size: 88,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                      AppSpacing.gapVLg,
+
+                      // 2. Personal Information
+                      Text(
+                        'Personal Information',
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.onSurface,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      AppSpacing.gapVSm,
+                      AppCard(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
                           children: [
-                            Text(
-                              DateFormat('MMMM d, yyyy').format(_selectedDob),
-                              style: AppTypography.bodyMd.copyWith(color: AppColors.onSurface),
+                            AppTextField(
+                              label: 'Full Legal Name',
+                              controller: _nameController,
+                              prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.outline),
+                              validator: (val) => val == null || val.isEmpty ? 'Please enter your full name' : null,
                             ),
-                            const Icon(Icons.calendar_today_rounded, size: 18, color: AppColors.primary),
+                            AppSpacing.gapVMd,
+                            AppTextField(
+                              label: 'Primary Phone Number',
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.outline),
+                              validator: (val) => val == null || val.isEmpty ? 'Please enter phone number' : null,
+                            ),
+                            AppSpacing.gapVMd,
+                            AppTextField(
+                              label: 'Residential Street Address',
+                              controller: _addressController,
+                              prefixIcon: const Icon(Icons.home_outlined, color: AppColors.outline),
+                              validator: (val) => val == null || val.isEmpty ? 'Please enter address' : null,
+                            ),
                           ],
                         ),
                       ),
-                    ),
-                    AppSpacing.gapVMd,
+                      AppSpacing.gapVLg,
 
-                    // Gender Selector
-                    Text(
-                      'Gender',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onSurface,
-                        fontWeight: FontWeight.w600,
+                      // 3. Clinical & Biometric Vitals
+                      Text(
+                        'Clinical Parameters',
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.onSurface,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    AppSpacing.gapVSm,
-                    Row(
-                      children: _genders.map((g) {
-                        final isSelected = _selectedGender == g;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: AppSpacing.sm),
-                          child: ChoiceChip(
-                            label: Text(g),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) {
-                                setState(() {
-                                  _selectedGender = g;
-                                });
-                              }
-                            },
-                            selectedColor: AppColors.primary,
-                            backgroundColor: AppColors.surfaceContainerLow,
-                            labelStyle: AppTypography.labelMd.copyWith(
-                              color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
+                      AppSpacing.gapVSm,
+                      AppCard(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppTextField(
+                                    label: 'Height (cm)',
+                                    controller: _heightController,
+                                    keyboardType: TextInputType.number,
+                                    prefixIcon: const Icon(Icons.height_rounded, color: AppColors.outline),
+                                  ),
+                                ),
+                                AppSpacing.gapHMd,
+                                Expanded(
+                                  child: AppTextField(
+                                    label: 'Weight (kg)',
+                                    controller: _weightController,
+                                    keyboardType: TextInputType.number,
+                                    prefixIcon: const Icon(Icons.monitor_weight_outlined, color: AppColors.outline),
+                                  ),
+                                ),
+                              ],
                             ),
-                            shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusFull),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    AppSpacing.gapVMd,
-
-                    // Blood Type Selector
-                    Text(
-                      'Blood Type',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onSurface,
-                        fontWeight: FontWeight.w600,
+                            AppSpacing.gapVMd,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: DropdownButtonFormField<String>(
+                                    initialValue: _selectedBloodType,
+                                    decoration: InputDecoration(
+                                      labelText: 'Blood Type',
+                                      filled: true,
+                                      fillColor: AppColors.surface,
+                                      border: OutlineInputBorder(
+                                        borderRadius: AppRadius.radiusMd,
+                                        borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: AppRadius.radiusMd,
+                                        borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                                      ),
+                                    ),
+                                    items: _bloodTypes.map((type) {
+                                      return DropdownMenuItem(value: type, child: Text(type));
+                                    }).toList(),
+                                    onChanged: (val) {
+                                      if (val != null) setState(() => _selectedBloodType = val);
+                                    },
+                                  ),
+                                ),
+                                AppSpacing.gapHMd,
+                                Expanded(
+                                  child: DropdownButtonFormField<String>(
+                                    initialValue: _selectedGender,
+                                    decoration: InputDecoration(
+                                      labelText: 'Gender',
+                                      filled: true,
+                                      fillColor: AppColors.surface,
+                                      border: OutlineInputBorder(
+                                        borderRadius: AppRadius.radiusMd,
+                                        borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: AppRadius.radiusMd,
+                                        borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                                      ),
+                                    ),
+                                    items: _genders.map((g) {
+                                      return DropdownMenuItem(value: g, child: Text(g));
+                                    }).toList(),
+                                    onChanged: (val) {
+                                      if (val != null) setState(() => _selectedGender = val);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    AppSpacing.gapVSm,
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: _bloodTypes.map((type) {
-                        final isSelected = _selectedBloodType == type;
-                        return ChoiceChip(
-                          label: Text(type),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            if (selected) {
-                              setState(() {
-                                _selectedBloodType = type;
-                              });
-                            }
-                          },
-                          selectedColor: AppColors.primary,
-                          backgroundColor: AppColors.surfaceContainerLow,
-                          labelStyle: AppTypography.labelMd.copyWith(
-                            color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusFull),
-                        );
-                      }).toList(),
-                    ),
-                    AppSpacing.gapVMd,
+                      AppSpacing.gapVLg,
 
-                    // Height & Weight Row
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppTextField(
-                            controller: _heightController,
-                            label: 'Height (cm)',
-                            hintText: '168',
-                            keyboardType: TextInputType.number,
-                          ),
+                      // 4. Emergency Contacts
+                      Text(
+                        'Emergency Contact',
+                        style: AppTypography.titleLarge.copyWith(
+                          color: AppColors.onSurface,
+                          fontWeight: FontWeight.w700,
                         ),
-                        AppSpacing.gapHMd,
-                        Expanded(
-                          child: AppTextField(
-                            controller: _weightController,
-                            label: 'Weight (kg)',
-                            hintText: '64.5',
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          ),
+                      ),
+                      AppSpacing.gapVSm,
+                      AppCard(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
+                          children: [
+                            AppTextField(
+                              label: 'Contact Full Name',
+                              controller: _emergencyNameController,
+                              prefixIcon: const Icon(Icons.emergency_outlined, color: AppColors.outline),
+                            ),
+                            AppSpacing.gapVMd,
+                            AppTextField(
+                              label: 'Emergency Phone',
+                              controller: _emergencyPhoneController,
+                              keyboardType: TextInputType.phone,
+                              prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.outline),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    AppSpacing.gapVMd,
-                    AppTextField(
-                      controller: _addressController,
-                      label: 'Home Address',
-                      hintText: '742 Evergreen Terrace, Springfield',
-                      prefixIcon: const Icon(Icons.home_outlined, size: 20, color: AppColors.onSurfaceVariant),
-                      maxLines: 2,
-                    ),
-                  ],
+                      ),
+                      AppSpacing.gapVXxl,
+                    ],
+                  ),
                 ),
               ),
-              AppSpacing.gapVLg,
-
-              // 3. Emergency Contact
-              Text(
-                'Emergency Contact Details',
-                style: AppTypography.headlineSm.copyWith(
-                  color: AppColors.onSurface,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              AppSpacing.gapVSm,
-              AppCard(
-                child: Column(
-                  children: [
-                    AppTextField(
-                      controller: _emergencyNameController,
-                      label: 'Contact Name & Relationship',
-                      hintText: 'David Jenkins (Spouse)',
-                      prefixIcon: const Icon(Icons.emergency_outlined, size: 20, color: AppColors.onSurfaceVariant),
-                    ),
-                    AppSpacing.gapVMd,
-                    AppTextField(
-                      controller: _emergencyPhoneController,
-                      label: 'Emergency Phone Number',
-                      hintText: '+1 (555) 019-5821',
-                      prefixIcon: const Icon(Icons.phone_outlined, size: 20, color: AppColors.onSurfaceVariant),
-                      keyboardType: TextInputType.phone,
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.gapV2Xl,
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
+
+      // 5. Sticky Bottom Save Bar
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.marginMobile,
           vertical: AppSpacing.md,
         ),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              offset: const Offset(0, -4),
-              blurRadius: 10,
-            ),
-          ],
+          border: Border(
+            top: BorderSide(color: AppColors.outlineVariant, width: 0.8),
+          ),
+          boxShadow: AppShadows.bottomNav,
         ),
         child: SafeArea(
-          child: AppButton(
-            text: 'Save Profile Changes',
-            prefixIcon: Icons.check_circle_outline_rounded,
-            onPressed: _handleSave,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 860),
+              child: AppButton(
+                text: 'Save Clinical Profile Changes',
+                prefixIcon: Icons.save_rounded,
+                onPressed: _handleSave,
+              ),
+            ),
           ),
         ),
       ),

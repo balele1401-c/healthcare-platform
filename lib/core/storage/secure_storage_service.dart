@@ -55,6 +55,19 @@ class SecureStorageService {
     return _prefs?.getBool(AppConstants.onboardingCompletedKey) ?? false;
   }
 
+  // Custom Storage Values
+  Future<void> saveCustomValue(String key, String value) async {
+    await _secureStorage.write(key: key, value: value);
+  }
+
+  Future<String?> getCustomValue(String key) async {
+    return await _secureStorage.read(key: key);
+  }
+
+  Future<void> deleteCustomValue(String key) async {
+    await _secureStorage.delete(key: key);
+  }
+
   // Clear Session
   Future<void> clearSession() async {
     await _secureStorage.delete(key: AppConstants.tokenKey);

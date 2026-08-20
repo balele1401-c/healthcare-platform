@@ -58,7 +58,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     final authState = ref.read(authControllerProvider);
 
     if (authState.isAuthenticated) {
-      context.go(AppRoutes.home);
+      final user = authState.user;
+      if (user != null && !user.isHealthProfileCompleted) {
+        context.go(AppRoutes.createHealthProfile);
+      } else {
+        context.go(AppRoutes.home);
+      }
     } else if (!onboardingDone) {
       context.go(AppRoutes.onboarding);
     } else {

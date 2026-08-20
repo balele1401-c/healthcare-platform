@@ -9,7 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error.dart';
-import '../../../../shared/widgets/app_loading.dart';
+import '../../../../shared/widgets/app_skeleton.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
 import '../../domain/models/notification_model.dart';
 import '../controllers/notification_controller.dart';
@@ -27,15 +27,18 @@ class NotificationsScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
-          onPressed: () => Navigator.pop(context),
-        ),
+        scrolledUnderElevation: 0.5,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
-          'Notifications',
+          'Clinical Alerts & Reminders',
           style: AppTypography.titleLarge.copyWith(
             color: AppColors.onSurface,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
         actions: [
@@ -56,168 +59,217 @@ class NotificationsScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // 1. Category Filter Chips
-          Container(
-            color: AppColors.surface,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.marginMobile, vertical: AppSpacing.sm),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.sm),
-                    child: ChoiceChip(
-                      label: const Text('All'),
-                      selected: selectedCategory == null,
-                      onSelected: (selected) {
-                        ref.read(selectedNotificationCategoryProvider.notifier).state = null;
-                      },
-                      selectedColor: AppColors.primary,
-                      backgroundColor: AppColors.surfaceContainerLow,
-                      labelStyle: AppTypography.labelMd.copyWith(
-                        color: selectedCategory == null ? AppColors.onPrimary : AppColors.onSurface,
-                        fontWeight: selectedCategory == null ? FontWeight.w700 : FontWeight.w500,
-                      ),
-                      shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusFull),
-                    ),
-                  ),
-                  for (final cat in NotificationCategory.values)
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.sm),
-                      child: ChoiceChip(
-                        label: Text(cat.label),
-                        selected: selectedCategory == cat,
-                        onSelected: (selected) {
-                          ref.read(selectedNotificationCategoryProvider.notifier).state = selected ? cat : null;
-                        },
-                        selectedColor: AppColors.primary,
-                        backgroundColor: AppColors.surfaceContainerLow,
-                        labelStyle: AppTypography.labelMd.copyWith(
-                          color: selectedCategory == cat ? AppColors.onPrimary : AppColors.onSurface,
-                          fontWeight: selectedCategory == cat ? FontWeight.w700 : FontWeight.w500,
-                        ),
-                        shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusFull),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          const Divider(height: 1, color: AppColors.outlineVariant),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 900;
 
-          // 2. Notifications List
-          Expanded(
-            child: notificationsAsync.when(
-              data: (notifications) {
-                if (notifications.isEmpty) {
-                  return const AppEmptyState(
-                    icon: Icons.notifications_none_rounded,
-                    title: 'No Notifications',
-                    message: 'You are all caught up with your clinical reminders and alerts.',
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    ref.invalidate(notificationsProvider);
-                    ref.invalidate(unreadNotificationCountProvider);
-                  },
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(AppSpacing.marginMobile),
-                    itemCount: notifications.length,
-                    separatorBuilder: (_, __) => AppSpacing.gapVSm,
-                    itemBuilder: (context, index) {
-                      final item = notifications[index];
-                      final timeFormatted = DateFormat('MMM d, h:mm a').format(item.timestamp);
-
-                      return AppCard(
-                        onTap: () async {
-                          final repo = ref.read(notificationRepositoryProvider);
-                          await repo.markAsRead(item.id);
-                          ref.invalidate(notificationsProvider);
-                          ref.invalidate(unreadNotificationCountProvider);
-
-                          if (item.routeTarget != null && context.mounted) {
-                            context.push(item.routeTarget!);
-                          }
-                        },
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        backgroundColor: item.isRead ? AppColors.surfaceContainerLowest : AppColors.surfaceContainerLow,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(AppSpacing.sm),
-                              decoration: BoxDecoration(
-                                color: item.category.color.withOpacity(0.12),
-                                shape: BoxShape.circle,
+          return Column(
+            children: [
+              // 1. Category Filter Chips
+              Container(
+                color: AppColors.surface,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+                  vertical: AppSpacing.sm,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 860),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: AppSpacing.sm),
+                            child: ChoiceChip(
+                              label: const Text('All Notifications'),
+                              selected: selectedCategory == null,
+                              onSelected: (selected) {
+                                ref.read(selectedNotificationCategoryProvider.notifier).state = null;
+                              },
+                              selectedColor: AppColors.primaryContainer,
+                              backgroundColor: AppColors.surfaceContainerLow,
+                              labelStyle: AppTypography.labelMd.copyWith(
+                                color: selectedCategory == null ? AppColors.primary : AppColors.onSurface,
+                                fontWeight: selectedCategory == null ? FontWeight.w700 : FontWeight.w500,
                               ),
-                              child: Icon(item.category.icon, color: item.category.color, size: 20),
-                            ),
-                            AppSpacing.gapHMd,
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          item.title,
-                                          style: AppTypography.titleMedium.copyWith(
-                                            color: AppColors.onSurface,
-                                            fontWeight: item.isRead ? FontWeight.w600 : FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                      if (!item.isRead)
-                                        Container(
-                                          width: 8,
-                                          height: 8,
-                                          margin: const EdgeInsets.only(left: AppSpacing.sm),
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.primary,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                  AppSpacing.gapVXs,
-                                  Text(
-                                    item.description,
-                                    style: AppTypography.bodySm.copyWith(color: AppColors.onSurfaceVariant),
-                                  ),
-                                  AppSpacing.gapVSm,
-                                  Text(
-                                    timeFormatted,
-                                    style: AppTypography.labelSm.copyWith(
-                                      color: AppColors.outline,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: AppRadius.radiusFull,
+                                side: BorderSide(
+                                  color: selectedCategory == null ? AppColors.primary : AppColors.outlineVariant,
+                                  width: 0.8,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    },
+                          ),
+                          for (final cat in NotificationCategory.values)
+                            Padding(
+                              padding: const EdgeInsets.only(right: AppSpacing.sm),
+                              child: ChoiceChip(
+                                label: Text(cat.label),
+                                selected: selectedCategory == cat,
+                                onSelected: (selected) {
+                                  ref.read(selectedNotificationCategoryProvider.notifier).state = selected ? cat : null;
+                                },
+                                selectedColor: AppColors.primaryContainer,
+                                backgroundColor: AppColors.surfaceContainerLow,
+                                labelStyle: AppTypography.labelMd.copyWith(
+                                  color: selectedCategory == cat ? AppColors.primary : AppColors.onSurface,
+                                  fontWeight: selectedCategory == cat ? FontWeight.w700 : FontWeight.w500,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: AppRadius.radiusFull,
+                                  side: BorderSide(
+                                    color: selectedCategory == cat ? AppColors.primary : AppColors.outlineVariant,
+                                    width: 0.8,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                );
-              },
-              loading: () => const Center(child: AppLoading(message: 'Loading notifications...')),
-              error: (err, _) => Center(
-                child: AppError(
-                  message: 'Failed to load notifications.',
-                  onRetry: () => ref.invalidate(notificationsProvider),
                 ),
               ),
-            ),
-          ),
-        ],
+              const Divider(height: 1, color: AppColors.outlineVariant),
+
+              // 2. Notifications List
+              Expanded(
+                child: notificationsAsync.when(
+                  data: (notifications) {
+                    if (notifications.isEmpty) {
+                      return const Center(
+                        child: AppEmptyState(
+                          icon: Icons.notifications_none_rounded,
+                          title: 'No Notifications',
+                          message: 'You are all caught up with your clinical reminders and alerts.',
+                        ),
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        ref.invalidate(notificationsProvider);
+                        ref.invalidate(unreadNotificationCountProvider);
+                      },
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 860),
+                          child: ListView.separated(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+                              vertical: AppSpacing.lg,
+                            ),
+                            itemCount: notifications.length,
+                            separatorBuilder: (context, index) => AppSpacing.gapVSm,
+                            itemBuilder: (context, index) {
+                              final item = notifications[index];
+                              final timeFormatted = DateFormat('MMM d, h:mm a').format(item.timestamp);
+
+                              return AppCard(
+                                onTap: () async {
+                                  final repo = ref.read(notificationRepositoryProvider);
+                                  await repo.markAsRead(item.id);
+                                  ref.invalidate(notificationsProvider);
+                                  ref.invalidate(unreadNotificationCountProvider);
+
+                                  if (context.mounted && item.routeTarget != null) {
+                                    context.push(item.routeTarget!);
+                                  }
+                                },
+                                padding: const EdgeInsets.all(AppSpacing.md),
+                                backgroundColor: item.isRead ? AppColors.surface : AppColors.primaryContainer.withValues(alpha: 0.25),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: item.category.color.withValues(alpha: 0.12),
+                                        borderRadius: AppRadius.radiusMd,
+                                      ),
+                                      child: Icon(item.category.icon, size: 20, color: item.category.color),
+                                    ),
+                                    AppSpacing.gapHMd,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  item.title,
+                                                  style: AppTypography.titleMedium.copyWith(
+                                                    color: AppColors.onSurface,
+                                                    fontWeight: item.isRead ? FontWeight.w600 : FontWeight.w800,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                              if (!item.isRead)
+                                                Container(
+                                                  width: 8,
+                                                  height: 8,
+                                                  decoration: const BoxDecoration(
+                                                    color: AppColors.primary,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                          AppSpacing.gapVXs,
+                                          Text(
+                                            item.description,
+                                            style: AppTypography.bodySm.copyWith(
+                                              color: AppColors.onSurfaceVariant,
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                          AppSpacing.gapVSm,
+                                          Text(
+                                            timeFormatted,
+                                            style: AppTypography.labelSm.copyWith(
+                                              color: AppColors.onSurfaceMuted,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  loading: () => Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 860),
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(AppSpacing.marginMobile),
+                        itemCount: 4,
+                        separatorBuilder: (context, index) => AppSpacing.gapVSm,
+                        itemBuilder: (context, index) => const AppSkeleton(width: double.infinity, height: 90),
+                      ),
+                    ),
+                  ),
+                  error: (err, _) => Center(
+                    child: AppError(
+                      message: 'Failed to load notifications.',
+                      onRetry: () => ref.invalidate(notificationsProvider),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -4,15 +4,17 @@ import '../../domain/models/health_profile_model.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 
-/// In-memory mock authentication repository for Phase 1 testing.
+/// In-memory mock authentication repository for unit and widget testing.
 class MockAuthRepository implements AuthRepository {
   final SecureStorageService _storageService;
+  bool isNewGoogleUser;
 
   UserModel? _currentUser;
   String? _lastSentOtp;
 
   MockAuthRepository({
     SecureStorageService? storageService,
+    this.isNewGoogleUser = false,
   }) : _storageService = storageService ?? SecureStorageService();
 
   @override
@@ -20,7 +22,7 @@ class MockAuthRepository implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     final normalizedEmail = email.trim().toLowerCase();
 
@@ -55,7 +57,7 @@ class MockAuthRepository implements AuthRepository {
     required String phoneNumber,
     required String password,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     final normalizedEmail = email.trim().toLowerCase();
 
@@ -78,10 +80,27 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<UserModel?> signInWithGoogle() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    _currentUser = UserModel(
+      id: 'patient_google_101',
+      name: 'Sarah Jenkins (Google)',
+      email: 'sarah.jenkins@gmail.com',
+      role: 'patient',
+      phoneNumber: '+1 555-019-2834',
+      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
+      isHealthProfileCompleted: !isNewGoogleUser,
+    );
+
+    await _storageService.saveToken('mock_google_token_${_currentUser!.id}');
+    return _currentUser;
+  }
+
+  @override
   Future<void> sendForgotPasswordOtp({
     required String identifier,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     if (identifier.contains('notfound')) {
       throw const AuthFailure('No account found with this email or phone.');
@@ -95,7 +114,7 @@ class MockAuthRepository implements AuthRepository {
     required String identifier,
     required String otpCode,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     if (otpCode == '123456' || otpCode == _lastSentOtp || otpCode == '000000') {
       return true;
@@ -110,7 +129,7 @@ class MockAuthRepository implements AuthRepository {
     required String otpCode,
     required String newPassword,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 200));
     await verifyOtp(identifier: identifier, otpCode: otpCode);
   }
 
@@ -118,7 +137,7 @@ class MockAuthRepository implements AuthRepository {
   Future<UserModel> createHealthProfile({
     required HealthProfileModel profile,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     if (_currentUser == null) {
       _currentUser = const UserModel(

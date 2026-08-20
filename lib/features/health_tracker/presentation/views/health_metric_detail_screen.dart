@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
@@ -68,9 +69,9 @@ class _HealthMetricDetailScreenState extends ConsumerState<HealthMetricDetailScr
             AppSpacing.gapVMd,
             Text(
               'Log ${_metric.type.displayName}',
-              style: AppTypography.headlineSm.copyWith(
+              style: AppTypography.titleLarge.copyWith(
                 color: AppColors.onSurface,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w800,
               ),
             ),
             AppSpacing.gapVSm,
@@ -87,7 +88,14 @@ class _HealthMetricDetailScreenState extends ConsumerState<HealthMetricDetailScr
                 hintText: 'e.g. ${_metric.currentValue}',
                 filled: true,
                 fillColor: AppColors.surfaceContainerLow,
-                border: OutlineInputBorder(borderRadius: AppRadius.radiusMd),
+                border: OutlineInputBorder(
+                  borderRadius: AppRadius.radiusMd,
+                  borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: AppRadius.radiusMd,
+                  borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                ),
               ),
             ),
             AppSpacing.gapVMd,
@@ -98,12 +106,19 @@ class _HealthMetricDetailScreenState extends ConsumerState<HealthMetricDetailScr
                 hintText: 'e.g. Resting morning reading',
                 filled: true,
                 fillColor: AppColors.surfaceContainerLow,
-                border: OutlineInputBorder(borderRadius: AppRadius.radiusMd),
+                border: OutlineInputBorder(
+                  borderRadius: AppRadius.radiusMd,
+                  borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: AppRadius.radiusMd,
+                  borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                ),
               ),
             ),
             AppSpacing.gapVLg,
             AppButton(
-              text: 'Save Measurement',
+              text: 'Save Measurement to EHR',
               onPressed: () async {
                 final text = valueController.text.trim();
                 final val = double.tryParse(text);
@@ -140,12 +155,14 @@ class _HealthMetricDetailScreenState extends ConsumerState<HealthMetricDetailScr
   @override
   Widget build(BuildContext context) {
     final lastUpdatedFormatted = DateFormat('MMM d, h:mm a').format(_metric.lastUpdated);
+    final accentColor = _metric.type.color;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
+        scrolledUnderElevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
           onPressed: () => Navigator.pop(context),
@@ -154,7 +171,7 @@ class _HealthMetricDetailScreenState extends ConsumerState<HealthMetricDetailScr
           _metric.type.displayName,
           style: AppTypography.titleLarge.copyWith(
             color: AppColors.onSurface,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
         actions: [
@@ -164,250 +181,183 @@ class _HealthMetricDetailScreenState extends ConsumerState<HealthMetricDetailScr
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.marginMobile,
-          vertical: AppSpacing.md,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Current Metric Overview Card
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 900;
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+              vertical: AppSpacing.lg,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 860),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Current Metric Overview Card
+                    AppCard(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(AppSpacing.sm),
-                            decoration: BoxDecoration(
-                              color: _metric.type.color.withOpacity(0.12),
-                              borderRadius: AppRadius.radiusSm,
-                            ),
-                            child: Icon(_metric.type.icon, color: _metric.type.color, size: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(AppSpacing.sm),
+                                    decoration: BoxDecoration(
+                                      color: accentColor.withValues(alpha: 0.12),
+                                      borderRadius: AppRadius.radiusSm,
+                                    ),
+                                    child: Icon(_metric.type.icon, color: accentColor, size: 24),
+                                  ),
+                                  AppSpacing.gapHMd,
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _metric.type.displayName,
+                                        style: AppTypography.titleMedium.copyWith(
+                                          color: AppColors.onSurface,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Updated: $lastUpdatedFormatted',
+                                        style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              AppBadge(
+                                text: _metric.statusLabel,
+                                variant: BadgeVariant.success,
+                              ),
+                            ],
                           ),
-                          AppSpacing.gapHMd,
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          AppSpacing.gapVLg,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
-                                _metric.type.displayName,
-                                style: AppTypography.titleMedium.copyWith(
+                                _metric.currentValue,
+                                style: AppTypography.displayLarge.copyWith(
                                   color: AppColors.onSurface,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 38,
                                 ),
                               ),
+                              AppSpacing.gapHSm,
                               Text(
-                                'Updated: $lastUpdatedFormatted',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                                _metric.type.unit,
+                                style: AppTypography.titleMedium.copyWith(
+                                  color: AppColors.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          AppSpacing.gapVSm,
+                          Row(
+                            children: [
+                              const Icon(Icons.show_chart_rounded, size: 16, color: AppColors.primary),
+                              AppSpacing.gapHXs,
+                              Text(
+                                'Trend: ${_metric.trend}',
+                                style: AppTypography.bodySm.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLow,
-                          borderRadius: AppRadius.radiusFull,
-                        ),
-                        child: Text(
-                          _metric.statusLabel,
-                          style: AppTypography.labelSm.copyWith(
-                            color: _metric.type.color,
-                            fontWeight: FontWeight.w700,
+                    ),
+                    AppSpacing.gapVLg,
+
+                    // 2. Trend Visualizer Chart
+                    Text(
+                      'Biometric Trend Analysis',
+                      style: AppTypography.titleLarge.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    AppSpacing.gapVSm,
+                    AppCard(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 150,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: _metric.history.take(7).toList().reversed.map((reading) {
+                                final maxVal = _metric.history.map((r) => r.value).reduce((a, b) => a > b ? a : b);
+                                final heightRatio = maxVal > 0 ? (reading.value / maxVal).clamp(0.2, 1.0) : 0.5;
+
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      reading.value == reading.value.roundToDouble()
+                                          ? reading.value.toInt().toString()
+                                          : reading.value.toStringAsFixed(1),
+                                      style: AppTypography.labelSm.copyWith(
+                                        fontSize: 10,
+                                        color: AppColors.onSurfaceVariant,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    AppSpacing.gapVXs,
+                                    Container(
+                                      width: 26,
+                                      height: 95 * heightRatio,
+                                      decoration: BoxDecoration(
+                                        color: accentColor,
+                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                                      ),
+                                    ),
+                                    AppSpacing.gapVXs,
+                                    Text(
+                                      DateFormat('E').format(reading.timestamp),
+                                      style: AppTypography.labelSm.copyWith(
+                                        fontSize: 10,
+                                        color: AppColors.onSurfaceMuted,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                  AppSpacing.gapVLg,
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        _metric.currentValue,
-                        style: AppTypography.displayLarge.copyWith(
-                          color: AppColors.onSurface,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      AppSpacing.gapHSm,
-                      Text(
-                        _metric.type.unit,
-                        style: AppTypography.titleMedium.copyWith(color: AppColors.onSurfaceVariant),
-                      ),
-                    ],
-                  ),
-                  AppSpacing.gapVSm,
-                  Text(
-                    'Trend: ${_metric.trend}',
-                    style: AppTypography.bodySm.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            AppSpacing.gapVLg,
+                    AppSpacing.gapVLg,
 
-            // 2. Trend Visualizer Chart
-            Text(
-              'Weekly Trend',
-              style: AppTypography.headlineSm.copyWith(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 140,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: _metric.history.take(7).toList().reversed.map((reading) {
-                        final maxVal = _metric.history.map((r) => r.value).reduce((a, b) => a > b ? a : b);
-                        final heightRatio = maxVal > 0 ? (reading.value / maxVal).clamp(0.2, 1.0) : 0.5;
-
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              reading.value == reading.value.roundToDouble()
-                                  ? reading.value.toInt().toString()
-                                  : reading.value.toStringAsFixed(1),
-                              style: AppTypography.labelSm.copyWith(
-                                fontSize: 10,
-                                color: AppColors.onSurfaceVariant,
-                              ),
-                            ),
-                            AppSpacing.gapVXs,
-                            Container(
-                              width: 24,
-                              height: 90 * heightRatio,
-                              decoration: BoxDecoration(
-                                color: _metric.type.color.withOpacity(0.85),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                              ),
-                            ),
-                            AppSpacing.gapVXs,
-                            Text(
-                              DateFormat('E').format(reading.timestamp),
-                              style: AppTypography.labelSm.copyWith(
-                                fontSize: 11,
-                                color: AppColors.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                    // 3. Log New Reading CTA
+                    AppButton(
+                      text: 'Log New ${_metric.type.displayName} Reading',
+                      prefixIcon: Icons.add_rounded,
+                      onPressed: _openAddReadingModal,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            AppSpacing.gapVLg,
-
-            // 3. Historical Measurements List
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Reading History (${_metric.history.length})',
-                  style: AppTypography.headlineSm.copyWith(
-                    color: AppColors.onSurface,
-                    fontWeight: FontWeight.w700,
-                  ),
+                    AppSpacing.gapVXxl,
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.primary),
-                  onPressed: _openAddReadingModal,
-                ),
-              ],
+              ),
             ),
-            AppSpacing.gapVSm,
-            Column(
-              children: _metric.history.map((reading) {
-                final timeFormatted = DateFormat('MMM d, yyyy • h:mm a').format(reading.timestamp);
-                final valString = reading.secondaryValue != null
-                    ? '${reading.value.toInt()}/${reading.secondaryValue}'
-                    : reading.value == reading.value.roundToDouble()
-                        ? reading.value.toInt().toString()
-                        : reading.value.toStringAsFixed(1);
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: AppCard(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              timeFormatted,
-                              style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
-                            ),
-                            AppSpacing.gapVXs,
-                            Text(
-                              reading.note,
-                              style: AppTypography.bodySm.copyWith(
-                                color: AppColors.onSurface,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          '$valString ${_metric.type.unit}',
-                          style: AppTypography.titleMedium.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            AppSpacing.gapV2Xl,
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.marginMobile,
-          vertical: AppSpacing.md,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              offset: const Offset(0, -4),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: AppButton(
-            text: 'Add New Measurement',
-            prefixIcon: Icons.add_rounded,
-            onPressed: _openAddReadingModal,
-          ),
-        ),
+          );
+        },
       ),
     );
   }

@@ -8,11 +8,14 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../shared/widgets/app_avatar.dart';
+import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/app_header.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
 import '../../../../shared/widgets/app_text_field.dart';
+import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../../domain/models/health_profile_model.dart';
 import '../controllers/auth_controller.dart';
 
@@ -35,6 +38,17 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
   final _emergencyPhoneController = TextEditingController(text: '+1 555-019-9876');
 
   final List<String> _bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(authControllerProvider).user;
+      if (user != null) {
+        ref.read(patientProfileProvider.notifier).syncFromUser(user);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -98,7 +112,16 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
     if (!mounted) return;
 
     if (success) {
-      AppSnackbar.showSuccess(context, 'Health profile completed!');
+      ref.read(patientProfileProvider.notifier).updateProfile(
+            dateOfBirth: _selectedDob,
+            gender: _selectedGender,
+            bloodType: _selectedBloodType,
+            heightCm: _heightController.text.trim(),
+            weightKg: _weightController.text.trim(),
+            emergencyContactName: _emergencyNameController.text.trim(),
+            emergencyContactPhone: _emergencyPhoneController.text.trim(),
+          );
+      AppSnackbar.showSuccess(context, 'Health profile completed successfully!');
       context.go(AppRoutes.home);
     } else {
       final errorMsg = ref.read(authControllerProvider).errorMessage ?? 'Failed to save profile.';
@@ -109,6 +132,7 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+    final user = authState.user;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -121,7 +145,7 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
           child: SingleChildScrollView(
             padding: AppSpacing.paddingScreenAll,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 520),
+              constraints: const BoxConstraints(maxWidth: 540),
               child: Column(
                 children: [
                   AppCard(
@@ -129,7 +153,7 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Header Banner
+                        // 1. Header Banner
                         Container(
                           padding: AppSpacing.paddingCard,
                           decoration: const BoxDecoration(
@@ -139,38 +163,61 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
                               bottom: BorderSide(color: AppColors.outlineVariant, width: 1),
                             ),
                           ),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryContainer,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.health_and_safety_rounded,
-                                  color: AppColors.onPrimaryContainer,
-                                  size: 32,
-                                ),
-                              ),
-                              AppSpacing.gapHMd,
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Complete Your Health Profile',
-                                      style: AppTypography.headlineSm.copyWith(
-                                        color: AppColors.onSurface,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                              Row(
+                                children: [
+                                  AppAvatar(
+                                    name: user?.name ?? 'Patient',
+                                    imageUrl: user?.avatarUrl,
+                                    size: 48,
+                                  ),
+                                  AppSpacing.gapHMd,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          user?.name.isNotEmpty == true ? user!.name : 'Welcome Patient',
+                                          style: AppTypography.titleMedium.copyWith(
+                                            color: AppColors.onSurface,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Text(
+                                          user?.email ?? 'Account Connected',
+                                          style: AppTypography.bodySm.copyWith(
+                                            color: AppColors.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    AppSpacing.gapVXs,
-                                    Text(
-                                      'Accurate details ensure optimal care and personalized recommendations.',
-                                      style: AppTypography.bodySm.copyWith(
-                                        color: AppColors.onSurfaceVariant,
+                                  ),
+                                  const AppBadge(
+                                    text: 'Step 2 of 2',
+                                    variant: BadgeVariant.primary,
+                                  ),
+                                ],
+                              ),
+                              AppSpacing.gapVMd,
+                              Container(
+                                padding: const EdgeInsets.all(AppSpacing.sm),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                                  borderRadius: AppRadius.radiusSm,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary),
+                                    AppSpacing.gapHSm,
+                                    Expanded(
+                                      child: Text(
+                                        'Please complete your vital health details to activate your clinical EHR and booking privileges.',
+                                        style: AppTypography.labelSm.copyWith(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -180,7 +227,7 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
                           ),
                         ),
 
-                        // Form Fields
+                        // 2. Form Fields
                         Padding(
                           padding: AppSpacing.paddingCard,
                           child: Form(
@@ -298,7 +345,7 @@ class _CreateHealthProfileScreenState extends ConsumerState<CreateHealthProfileS
                                       selectedColor: AppColors.primaryContainer,
                                       backgroundColor: AppColors.surfaceContainerLowest,
                                       labelStyle: AppTypography.labelMd.copyWith(
-                                        color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
+                                        color: isSelected ? AppColors.primary : AppColors.onSurface,
                                         fontWeight: FontWeight.w600,
                                       ),
                                       shape: const RoundedRectangleBorder(

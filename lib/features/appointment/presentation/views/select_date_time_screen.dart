@@ -5,12 +5,13 @@ import 'package:intl/intl.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/app_avatar.dart';
+import '../../../../shared/widgets/app_badge.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_card.dart';
-import '../../../../shared/widgets/app_snackbar.dart';
 import '../../../doctor/domain/models/doctor_model.dart';
 import '../../domain/models/appointment_model.dart';
 import '../controllers/appointment_controller.dart';
@@ -59,316 +60,355 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
+        scrolledUnderElevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Select Date & Time',
+          'Select Schedule & Mode',
           style: AppTypography.titleLarge.copyWith(
             color: AppColors.onSurface,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.marginMobile,
-          vertical: AppSpacing.md,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Doctor Header Summary
-            AppCard(
-              child: Row(
-                children: [
-                  AppAvatar(
-                    name: widget.doctor.name,
-                    imageUrl: widget.doctor.avatarUrl,
-                    size: 50,
-                  ),
-                  AppSpacing.gapHMd,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 900;
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? AppSpacing.desktopMargin : AppSpacing.marginMobile,
+              vertical: AppSpacing.lg,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 860),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Doctor Header Summary
+                    AppCard(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      child: Row(
+                        children: [
+                          AppAvatar(
+                            name: widget.doctor.name,
+                            imageUrl: widget.doctor.avatarUrl,
+                            size: 52,
+                          ),
+                          AppSpacing.gapHMd,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.doctor.name,
+                                  style: AppTypography.titleMedium.copyWith(
+                                    color: AppColors.onSurface,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                AppSpacing.gapVXs,
+                                Text(
+                                  widget.doctor.specialty,
+                                  style: AppTypography.bodySm.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  widget.doctor.clinicName,
+                                  style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          AppBadge(
+                            text: '\$${widget.doctor.consultationFee.toStringAsFixed(0)}',
+                            variant: BadgeVariant.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                    AppSpacing.gapVLg,
+
+                    // 2. Consultation Type
+                    Text(
+                      'Consultation Mode',
+                      style: AppTypography.titleLarge.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    AppSpacing.gapVSm,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _ConsultationTypeCard(
+                            title: 'In-Clinic Visit',
+                            subtitle: 'Physical consultation at clinic',
+                            icon: Icons.local_hospital_outlined,
+                            isSelected: _consultationType == ConsultationType.inPerson,
+                            onTap: () {
+                              setState(() {
+                                _consultationType = ConsultationType.inPerson;
+                              });
+                            },
+                          ),
+                        ),
+                        AppSpacing.gapHMd,
+                        Expanded(
+                          child: _ConsultationTypeCard(
+                            title: 'HD Video Consultation',
+                            subtitle: 'Secure telemedicine room',
+                            icon: Icons.videocam_outlined,
+                            isSelected: _consultationType == ConsultationType.videoCall,
+                            onTap: () {
+                              setState(() {
+                                _consultationType = ConsultationType.videoCall;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    AppSpacing.gapVLg,
+
+                    // 3. Select Date (Horizontal Scrollable Strip)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.doctor.name,
-                          style: AppTypography.titleMedium.copyWith(
+                          'Select Date',
+                          style: AppTypography.titleLarge.copyWith(
                             color: AppColors.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         Text(
-                          widget.doctor.specialty,
-                          style: AppTypography.bodySm.copyWith(color: AppColors.primary),
-                        ),
-                        Text(
-                          widget.doctor.clinicName,
-                          style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          DateFormat('MMMM yyyy').format(_selectedDate),
+                          style: AppTypography.labelMd.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-            AppSpacing.gapVLg,
-
-            // 2. Consultation Type
-            Text(
-              'Consultation Type',
-              style: AppTypography.headlineSm.copyWith(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            Row(
-              children: [
-                Expanded(
-                  child: _ConsultationTypeCard(
-                    title: 'In-Person Visit',
-                    subtitle: 'At clinic location',
-                    icon: Icons.local_hospital_outlined,
-                    isSelected: _consultationType == ConsultationType.inPerson,
-                    onTap: () {
-                      setState(() {
-                        _consultationType = ConsultationType.inPerson;
-                      });
-                    },
-                  ),
-                ),
-                AppSpacing.gapHMd,
-                Expanded(
-                  child: _ConsultationTypeCard(
-                    title: 'Video Call',
-                    subtitle: 'Online teleconsult',
-                    icon: Icons.videocam_outlined,
-                    isSelected: _consultationType == ConsultationType.videoCall,
-                    onTap: () {
-                      setState(() {
-                        _consultationType = ConsultationType.videoCall;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            AppSpacing.gapVLg,
-
-            // 3. Select Date (Horizontal Scrollable Strip)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select Date',
-                  style: AppTypography.headlineSm.copyWith(
-                    color: AppColors.onSurface,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  DateFormat('MMMM yyyy').format(_selectedDate),
-                  style: AppTypography.labelMd.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-            AppSpacing.gapVSm,
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: dates.map((date) {
-                  final isSelected = DateUtils.isSameDay(_selectedDate, date);
-                  return Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.sm),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedDate = date;
-                        });
-                      },
-                      child: Container(
-                        width: 64,
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
-                          borderRadius: AppRadius.radiusMd,
-                          border: Border.all(
-                            color: isSelected ? AppColors.primary : AppColors.outlineVariant,
-                            width: isSelected ? 2 : 1,
-                          ),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: AppColors.primary.withOpacity(0.25),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
+                    AppSpacing.gapVSm,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: dates.map((date) {
+                          final isSelected = DateUtils.isSameDay(_selectedDate, date);
+                          return Padding(
+                            padding: const EdgeInsets.only(right: AppSpacing.sm),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedDate = date;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                width: 68,
+                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? AppColors.primary : AppColors.surface,
+                                  borderRadius: AppRadius.radiusMd,
+                                  border: Border.all(
+                                    color: isSelected ? AppColors.primary : AppColors.outlineVariant,
+                                    width: isSelected ? 1.5 : 0.8,
                                   ),
-                                ]
-                              : null,
+                                  boxShadow: isSelected ? AppShadows.cardHover : AppShadows.cardAmbient,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      DateFormat('EEE').format(date).toUpperCase(),
+                                      style: AppTypography.labelSm.copyWith(
+                                        color: isSelected ? Colors.white.withValues(alpha: 0.9) : AppColors.onSurfaceVariant,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    AppSpacing.gapVXs,
+                                    Text(
+                                      DateFormat('d').format(date),
+                                      style: AppTypography.titleLarge.copyWith(
+                                        color: isSelected ? Colors.white : AppColors.onSurface,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    AppSpacing.gapVLg,
+
+                    // 4. Select Time Slots
+                    Text(
+                      'Available Appointment Slots',
+                      style: AppTypography.titleLarge.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    AppSpacing.gapVSm,
+                    Text(
+                      'Morning Sessions',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    AppSpacing.gapVSm,
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: _morningSlots.map((slot) {
+                        final isSelected = _selectedTimeSlot == slot;
+                        return _TimeSlotChip(
+                          time: slot,
+                          isSelected: isSelected,
+                          onTap: () {
+                            setState(() {
+                              _selectedTimeSlot = slot;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    AppSpacing.gapVMd,
+                    Text(
+                      'Afternoon Sessions',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    AppSpacing.gapVSm,
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: _afternoonSlots.map((slot) {
+                        final isSelected = _selectedTimeSlot == slot;
+                        return _TimeSlotChip(
+                          time: slot,
+                          isSelected: isSelected,
+                          onTap: () {
+                            setState(() {
+                              _selectedTimeSlot = slot;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    AppSpacing.gapVLg,
+
+                    // 5. Patient Notes / Symptoms (Optional)
+                    Text(
+                      'Symptoms / Clinical Notes (Optional)',
+                      style: AppTypography.titleLarge.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    AppSpacing.gapVSm,
+                    TextField(
+                      controller: _notesController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Briefly describe your symptoms or reason for visit...',
+                        filled: true,
+                        fillColor: AppColors.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: AppRadius.radiusMd,
+                          borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
                         ),
-                        child: Column(
-                          children: [
-                            Text(
-                              DateFormat('E').format(date),
-                              style: AppTypography.labelSm.copyWith(
-                                color: isSelected ? AppColors.onPrimary.withOpacity(0.9) : AppColors.onSurfaceVariant,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            AppSpacing.gapVXs,
-                            Text(
-                              DateFormat('d').format(date),
-                              style: AppTypography.titleLarge.copyWith(
-                                color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ],
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: AppRadius.radiusMd,
+                          borderSide: const BorderSide(color: AppColors.outlineVariant, width: 0.8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: AppRadius.radiusMd,
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                         ),
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-            AppSpacing.gapVLg,
-
-            // 4. Select Time Slots
-            Text(
-              'Available Time Slots',
-              style: AppTypography.headlineSm.copyWith(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            Text(
-              'Morning Slots',
-              style: AppTypography.labelMd.copyWith(
-                color: AppColors.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: _morningSlots.map((slot) {
-                final isSelected = _selectedTimeSlot == slot;
-                return _TimeSlotChip(
-                  time: slot,
-                  isSelected: isSelected,
-                  onTap: () {
-                    setState(() {
-                      _selectedTimeSlot = slot;
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            AppSpacing.gapVMd,
-            Text(
-              'Afternoon Slots',
-              style: AppTypography.labelMd.copyWith(
-                color: AppColors.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: _afternoonSlots.map((slot) {
-                final isSelected = _selectedTimeSlot == slot;
-                return _TimeSlotChip(
-                  time: slot,
-                  isSelected: isSelected,
-                  onTap: () {
-                    setState(() {
-                      _selectedTimeSlot = slot;
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            AppSpacing.gapVLg,
-
-            // 5. Patient Notes (Optional)
-            Text(
-              'Appointment Notes (Optional)',
-              style: AppTypography.titleMedium.copyWith(
-                color: AppColors.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            AppSpacing.gapVSm,
-            TextField(
-              controller: _notesController,
-              maxLines: 3,
-              decoration: InputDecoration(
-                hintText: 'Briefly describe your symptoms or reason for visit...',
-                filled: true,
-                fillColor: AppColors.surfaceContainerLowest,
-                border: OutlineInputBorder(
-                  borderRadius: AppRadius.radiusMd,
-                  borderSide: const BorderSide(color: AppColors.outlineVariant),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: AppRadius.radiusMd,
-                  borderSide: const BorderSide(color: AppColors.outlineVariant),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: AppRadius.radiusMd,
-                  borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                    AppSpacing.gapVXxl,
+                  ],
                 ),
               ),
             ),
-            AppSpacing.gapV2Xl,
-          ],
-        ),
+          );
+        },
       ),
+
+      // 6. Sticky Bottom Action Bar
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.marginMobile,
           vertical: AppSpacing.md,
         ),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              offset: const Offset(0, -4),
-              blurRadius: 10,
-            ),
-          ],
+          border: Border(
+            top: BorderSide(color: AppColors.outlineVariant, width: 0.8),
+          ),
+          boxShadow: AppShadows.bottomNav,
         ),
         child: SafeArea(
-          child: AppButton(
-            text: 'Continue to Confirmation',
-            isDisabled: _selectedTimeSlot == null,
-            onPressed: () {
-              if (_selectedTimeSlot == null) {
-                AppSnackbar.showError(context, 'Please select a time slot.');
-                return;
-              }
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 860),
+              child: Row(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Payable',
+                        style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                      ),
+                      Text(
+                        '\$${widget.doctor.consultationFee.toStringAsFixed(0)}',
+                        style: AppTypography.headlineSm.copyWith(
+                          color: AppColors.onSurface,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppSpacing.gapHLg,
+                  Expanded(
+                    child: AppButton(
+                      text: 'Review & Confirm Booking',
+                      prefixIcon: Icons.arrow_forward_rounded,
+                      onPressed: _selectedTimeSlot == null
+                          ? null
+                          : () {
+                              final draftNotifier = ref.read(bookingDraftProvider.notifier);
+                              draftNotifier.setDate(_selectedDate);
+                              draftNotifier.setTimeSlot(_selectedTimeSlot!);
+                              draftNotifier.setConsultationType(_consultationType);
+                              draftNotifier.setPatientNotes(_notesController.text.trim());
 
-              final draft = ref.read(bookingDraftProvider.notifier);
-              draft.setDoctor(widget.doctor);
-              draft.setDate(_selectedDate);
-              draft.setTimeSlot(_selectedTimeSlot!);
-              draft.setConsultationType(_consultationType);
-              draft.setPatientNotes(_notesController.text.trim());
-
-              context.push(AppRoutes.appointmentConfirmation);
-            },
+                              context.push(AppRoutes.appointmentConfirmation);
+                            },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -395,35 +435,49 @@ class _ConsultationTypeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryFixedDim.withOpacity(0.2) : AppColors.surfaceContainerLowest,
+          color: isSelected ? AppColors.primaryContainer.withValues(alpha: 0.5) : AppColors.surface,
           borderRadius: AppRadius.radiusMd,
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.outlineVariant,
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 1.5 : 0.8,
           ),
+          boxShadow: isSelected ? AppShadows.cardHover : AppShadows.cardAmbient,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
-            ),
-            AppSpacing.gapVSm,
-            Text(
-              title,
-              style: AppTypography.bodyMd.copyWith(
-                color: isSelected ? AppColors.primary : AppColors.onSurface,
-                fontWeight: FontWeight.w700,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary : AppColors.surfaceContainerLow,
+                borderRadius: AppRadius.radiusSm,
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? Colors.white : AppColors.primary,
+                size: 22,
               ),
             ),
+            AppSpacing.gapVMd,
+            Text(
+              title,
+              style: AppTypography.titleMedium.copyWith(
+                color: isSelected ? AppColors.primary : AppColors.onSurface,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+            ),
+            AppSpacing.gapVXs,
             Text(
               subtitle,
-              style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+              style: AppTypography.labelSm.copyWith(
+                color: AppColors.onSurfaceVariant,
+                fontSize: 11,
+              ),
             ),
           ],
         ),
@@ -447,20 +501,21 @@ class _TimeSlotChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
+          color: isSelected ? AppColors.primary : AppColors.surface,
           borderRadius: AppRadius.radiusBase,
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.outlineVariant,
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 1.5 : 0.8,
           ),
         ),
         child: Text(
           time,
           style: AppTypography.labelMd.copyWith(
-            color: isSelected ? AppColors.onPrimary : AppColors.onSurface,
+            color: isSelected ? Colors.white : AppColors.onSurface,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
         ),

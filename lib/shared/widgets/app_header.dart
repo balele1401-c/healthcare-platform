@@ -11,6 +11,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
+  final bool hasBottomBorder;
 
   const AppHeader({
     super.key,
@@ -21,6 +22,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.onBack,
     this.actions,
     this.bottom,
+    this.hasBottomBorder = true,
   });
 
   @override
@@ -39,20 +41,34 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       );
     }
 
-    return AppBar(
-      leading: leading,
-      title: titleWidget ??
-          (title != null
-              ? Text(
-                  title!,
-                  style: AppTypography.headlineSm.copyWith(
-                    color: AppColors.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-              : null),
-      actions: actions,
-      bottom: bottom,
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: hasBottomBorder
+            ? const Border(
+                bottom: BorderSide(color: Color(0x1AC2C6D8), width: 1),
+              )
+            : null,
+      ),
+      child: AppBar(
+        leading: leading,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        title: titleWidget ??
+            (title != null
+                ? Text(
+                    title!,
+                    style: AppTypography.headlineSm.copyWith(
+                      color: AppColors.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                : null),
+        actions: actions,
+        bottom: bottom,
+      ),
     );
   }
 

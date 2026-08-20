@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "995397077164",
+    "project_id": "healtcare-d3fa6",
+    "storage_bucket": "healtcare-d3fa6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995397077164:android:d4b7262a53e5a026ea7709",
+        "android_client_info": {
+          "package_name": "com.example.healthcare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995397077164-kssd4bleuul45u21tj11fc58fksgu5sm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCl2GONJt2fgLvd_ll_hejQIgjm8llhks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995397077164-kssd4bleuul45u21tj11fc58fksgu5sm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "995397077164-7qu7fdcgd0kmefql2af82bv8odobsmpv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.healthcare"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

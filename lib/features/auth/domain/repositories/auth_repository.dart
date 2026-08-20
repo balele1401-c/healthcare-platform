@@ -17,6 +17,8 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<UserModel?> signInWithGoogle();
+
   Future<void> sendForgotPasswordOtp({
     required String identifier,
   });

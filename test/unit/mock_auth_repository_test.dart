@@ -50,6 +50,26 @@ void main() {
       expect(user.isHealthProfileCompleted, false);
     });
 
+    test('signInWithGoogle returns existing user with completed profile', () async {
+      repository.isNewGoogleUser = false;
+      final user = await repository.signInWithGoogle();
+
+      expect(user, isNotNull);
+      expect(user?.name, 'Sarah Jenkins (Google)');
+      expect(user?.email, 'sarah.jenkins@gmail.com');
+      expect(user?.isHealthProfileCompleted, true);
+    });
+
+    test('signInWithGoogle returns new user with incomplete profile', () async {
+      repository.isNewGoogleUser = true;
+      final user = await repository.signInWithGoogle();
+
+      expect(user, isNotNull);
+      expect(user?.name, 'Sarah Jenkins (Google)');
+      expect(user?.email, 'sarah.jenkins@gmail.com');
+      expect(user?.isHealthProfileCompleted, false);
+    });
+
     test('verifyOtp succeeds with 123456', () async {
       await repository.sendForgotPasswordOtp(identifier: 'sarah@example.com');
       final result = await repository.verifyOtp(
