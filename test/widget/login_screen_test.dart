@@ -22,7 +22,7 @@ void main() {
   }
 
   group('PatientLoginScreen Widget Tests', () {
-    testWidgets('renders login header and essential fields', (tester) async {
+    testWidgets('renders login header, empty fields with correct placeholders', (tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -31,20 +31,22 @@ void main() {
 
       expect(find.text('Welcome Back'), findsOneWidget);
       expect(find.text('Email Address'), findsOneWidget);
+      expect(find.text('Enter your email address'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
+      expect(find.text('Enter your password'), findsOneWidget);
       expect(find.text('Sign In'), findsOneWidget);
       expect(find.text('Forgot Password?'), findsOneWidget);
     });
 
-    testWidgets('renders social buttons (Google & Apple)', (tester) async {
+    testWidgets('renders Google sign-in button and no Apple button', (tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
-      expect(find.text('Google'), findsOneWidget);
-      expect(find.text('Apple'), findsOneWidget);
+      expect(find.text('Continue with Google'), findsOneWidget);
+      expect(find.text('Apple'), findsNothing);
     });
   });
 }

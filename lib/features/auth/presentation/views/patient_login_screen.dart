@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -28,8 +29,8 @@ class PatientLoginScreen extends ConsumerStatefulWidget {
 
 class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'sarah.jenkins@example.com');
-  final _passwordController = TextEditingController(text: 'Password123!');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isGoogleSigningIn = false;
 
   @override
@@ -128,90 +129,51 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Top Logo
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          borderRadius: AppRadius.radiusMd,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                        ),
-                        child: const Icon(Icons.health_and_safety_rounded, color: Colors.white, size: 28),
-                      ),
-                      AppSpacing.gapHMd,
-                      Text(
-                        'HealthCare Enterprise',
-                        style: AppTypography.titleLarge.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ],
-                  ),
+                  const AppLogo(iconSize: 40, fontSize: 24, isLight: true),
 
                   // Middle Value Proposition
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const AppBadge(
-                        text: 'CLINICAL PLATFORM 3.0',
-                        variant: BadgeVariant.secondary,
-                        icon: Icons.verified_user_rounded,
+                        text: 'SECURE CLINICAL PLATFORM',
+                        variant: BadgeVariant.primary,
                       ),
                       AppSpacing.gapVMd,
                       Text(
-                        'Integrated Patient Care & Telemedicine Portal',
+                        'Next-Generation Integrated Healthcare for Patients and Physicians.',
                         style: AppTypography.displayLarge.copyWith(
                           color: Colors.white,
-                          fontSize: 40,
+                          fontSize: 36,
                           fontWeight: FontWeight.w800,
-                          height: 1.15,
-                          letterSpacing: -1.0,
+                          height: 1.2,
                         ),
                       ),
                       AppSpacing.gapVMd,
                       Text(
-                        'Access verified specialists, real-time lab records, prescription deliveries, and AI triage guidance in one HIPAA-compliant platform.',
+                        'Schedule verified telemedicine consultations, manage electronic health records, and track vital signs in a single unified HIPAA-compliant portal.',
                         style: AppTypography.bodyLg.copyWith(
-                          color: const Color(0xFF94A3B8),
+                          color: const Color(0xFFCBD5E1),
                           height: 1.5,
                         ),
                       ),
                       AppSpacing.gapVXl,
 
-                      // Trust Features Grid
+                      // Trust Badges Grid
                       Row(
                         children: [
-                          _buildTrustFeature(
-                            icon: Icons.lock_outline_rounded,
-                            title: 'HIPAA & FHIR',
-                            subtitle: 'Enterprise Security',
-                          ),
-                          AppSpacing.gapHXl,
-                          _buildTrustFeature(
-                            icon: Icons.videocam_outlined,
-                            title: 'HD Telehealth',
-                            subtitle: 'End-to-End Encrypted',
-                          ),
-                          AppSpacing.gapHXl,
-                          _buildTrustFeature(
-                            icon: Icons.auto_awesome_rounded,
-                            title: 'Clinical AI',
-                            subtitle: 'Instant Triage',
-                          ),
+                          _buildTrustPill(Icons.verified_user_outlined, 'HIPAA Compliant', '256-bit SSL Data Security'),
+                          const SizedBox(width: 24),
+                          _buildTrustPill(Icons.medical_services_outlined, 'Board-Certified', '120+ Specialist Doctors'),
                         ],
                       ),
                     ],
                   ),
 
-                  // Bottom Accreditation Footer
+                  // Footer Copyright / Status
                   Text(
-                    '© 2026 HealthCare Platform Inc. Verified Medical Network.',
-                    style: AppTypography.labelSm.copyWith(
-                      color: const Color(0xFF64748B),
-                    ),
+                    '© 2026 HealthCare Integrated Medical Platform. All rights reserved.',
+                    style: AppTypography.labelSm.copyWith(color: const Color(0xFF64748B)),
                   ),
                 ],
               ),
@@ -219,17 +181,20 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
           ),
         ),
 
-        // Right Authentication Form Area
+        // Right Authentication Card Panel
         Expanded(
           flex: 5,
           child: Container(
-            color: AppColors.surface,
+            color: AppColors.background,
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
-                  child: _buildLoginForm(context),
+                  constraints: const BoxConstraints(maxWidth: 440),
+                  child: AppCard(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: _buildLoginForm(context),
+                  ),
                 ),
               ),
             ),
@@ -239,11 +204,7 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
     );
   }
 
-  Widget _buildTrustFeature({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
+  Widget _buildTrustPill(IconData icon, String title, String subtitle) {
     return Row(
       children: [
         Container(
@@ -331,7 +292,7 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
 
           AppTextField(
             label: 'Email Address',
-            hintText: 'name@example.com',
+            hintText: 'Enter your email address',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             validator: Validators.validateEmail,
@@ -341,6 +302,7 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
 
           AppPasswordField(
             label: 'Password',
+            hintText: 'Enter your password',
             controller: _passwordController,
             validator: Validators.validatePassword,
           ),
@@ -363,35 +325,18 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
 
           const AppDivider(text: 'OR SIGN IN WITH'),
 
-          Row(
-            children: [
-              Expanded(
-                child: AppButton(
-                  text: 'Google',
-                  variant: ButtonVariant.outlined,
-                  prefixIcon: Icons.g_mobiledata_rounded,
-                  isLoading: _isGoogleSigningIn,
-                  onPressed: (authState.isLoading || _isGoogleSigningIn)
-                      ? null
-                      : _handleGoogleLogin,
-                ),
-              ),
-              AppSpacing.gapHMd,
-              Expanded(
-                child: AppButton(
-                  text: 'Apple',
-                  variant: ButtonVariant.outlined,
-                  prefixIcon: Icons.apple_rounded,
-                  onPressed: (authState.isLoading || _isGoogleSigningIn)
-                      ? null
-                      : () {
-                          AppSnackbar.showInfo(context, 'Apple Sign-In is simulated in mock mode.');
-                          _emailController.text = 'sarah.apple@example.com';
-                          _passwordController.text = 'AppleAuth123!';
-                        },
-                ),
-              ),
-            ],
+          AppButton(
+            text: 'Continue with Google',
+            variant: ButtonVariant.outlined,
+            prefixWidget: SvgPicture.asset(
+              'assets/icons/google_logo.svg',
+              width: 20,
+              height: 20,
+            ),
+            isLoading: _isGoogleSigningIn,
+            onPressed: (authState.isLoading || _isGoogleSigningIn)
+                ? null
+                : _handleGoogleLogin,
           ),
 
           if (MediaQuery.of(context).size.width >= 960) ...[

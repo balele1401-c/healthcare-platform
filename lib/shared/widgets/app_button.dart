@@ -13,6 +13,7 @@ class AppButton extends StatefulWidget {
   final bool isLoading;
   final bool isFullWidth;
   final IconData? prefixIcon;
+  final Widget? prefixWidget;
   final IconData? suffixIcon;
   final double height;
 
@@ -24,6 +25,7 @@ class AppButton extends StatefulWidget {
     this.isLoading = false,
     this.isFullWidth = true,
     this.prefixIcon,
+    this.prefixWidget,
     this.suffixIcon,
     this.height = 48.0,
   });
@@ -62,7 +64,10 @@ class _AppButtonState extends State<AppButton> {
           if (widget.isLoading)
             buildLoading(foregroundColor)
           else ...[
-            if (widget.prefixIcon != null) ...[
+            if (widget.prefixWidget != null) ...[
+              widget.prefixWidget!,
+              const SizedBox(width: AppSpacing.sm + 2),
+            ] else if (widget.prefixIcon != null) ...[
               buildIcon(widget.prefixIcon!, foregroundColor),
               const SizedBox(width: AppSpacing.sm),
             ],

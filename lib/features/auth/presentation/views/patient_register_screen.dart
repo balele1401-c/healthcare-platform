@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -351,33 +352,18 @@ class _PatientRegisterScreenState extends ConsumerState<PatientRegisterScreen> {
 
           const AppDivider(text: 'OR SIGN UP WITH'),
 
-          Row(
-            children: [
-              Expanded(
-                child: AppButton(
-                  text: 'Google',
-                  variant: ButtonVariant.outlined,
-                  prefixIcon: Icons.g_mobiledata_rounded,
-                  isLoading: _isGoogleSigningIn,
-                  onPressed: (authState.isLoading || _isGoogleSigningIn)
-                      ? null
-                      : _handleGoogleSignUp,
-                ),
-              ),
-              AppSpacing.gapHMd,
-              Expanded(
-                child: AppButton(
-                  text: 'Apple',
-                  variant: ButtonVariant.outlined,
-                  prefixIcon: Icons.apple_rounded,
-                  onPressed: (authState.isLoading || _isGoogleSigningIn)
-                      ? null
-                      : () {
-                          AppSnackbar.showInfo(context, 'Apple Sign-In is simulated in mock mode.');
-                        },
-                ),
-              ),
-            ],
+          AppButton(
+            text: 'Continue with Google',
+            variant: ButtonVariant.outlined,
+            prefixWidget: SvgPicture.asset(
+              'assets/icons/google_logo.svg',
+              width: 20,
+              height: 20,
+            ),
+            isLoading: _isGoogleSigningIn,
+            onPressed: (authState.isLoading || _isGoogleSigningIn)
+                ? null
+                : _handleGoogleSignUp,
           ),
 
           if (MediaQuery.of(context).size.width >= 960) ...[
