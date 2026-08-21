@@ -56,53 +56,141 @@ void main() {
       }
     });
 
-    test('End-to-end Patient Register, Login, and Profile on Railway API', () async {
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final testEmail = 'patient.test.$timestamp@example.com';
-      final testPassword = 'SecurePassword123!';
+    test('Multi-Role Login & Authorization Matrix (Patient, Doctor, Staff, Admin, Owner)', () async {
+      final roles = [
+        {'email': 'patient@healthcare.test', 'role': 'patient'},
+        {'email': 'doctor@healthcare.test', 'role': 'doctor'},
+        {'email': 'staff@healthcare.test', 'role': 'staff'},
+        {'email': 'admin@healthcare.test', 'role': 'admin'},
+        {'email': 'owner@healthcare.test', 'role': 'owner'},
+      ];
 
-      // 1. Register
-      final regResponse = await dio.post('/auth/register', data: {
-        'name': 'Test Integration Patient',
-        'email': testEmail,
-        'phone': '+1555019${timestamp.toString().substring(timestamp.toString().length - 4)}',
-        'password': testPassword,
-        'password_confirmation': testPassword,
+      for (final r in roles) {
+        // 1. Authenticate with single login endpoint
+        final loginRes = await dio.post('/auth/login', data: {
+          'email': r['email'],
+          'password': 'Password123!',
+        });
+
+        expect(loginRes.statusCode, 200);
+        expect(loginRes.data['success'], isTrue);
+        expect(loginRes.data['data']['user']['role'], r['role']);
+        final token = loginRes.data['data']['token'] as String;
+        expect(token, isNotEmpty);
+
+        // 2. Fetch authenticated profile
+        final meRes = await dio.get(
+          '/auth/me',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+        );
+        expect(meRes.statusCode, 200);
+        expect(meRes.data['data']['role'], r['role']);
+      }
+    });
+
+    test('Role-Based Authorization Enforcement Tests', () async {
+      // Login as Patient
+      final patientLogin = await dio.post('/auth/login', data: {
+        'email': 'patient@healthcare.test',
+        'password': 'Password123!',
       });
+      final patientToken = patientLogin.data['data']['token'];
 
-      expect(regResponse.statusCode, anyOf(200, 201));
-      expect(regResponse.data['success'], isTrue);
-      final token = regResponse.data['data']['token'] as String;
-      expect(token, isNotEmpty);
-
-      // 2. Authenticated Profile Fetch
-      final profileResponse = await dio.get(
+      // Patient -> Patient Endpoint = Allowed
+      final patientSelfRes = await dio.get(
         '/patient/profile',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: Options(headers: {'Authorization': 'Bearer $patientToken'}),
       );
+      expect(patientSelfRes.statusCode, 200);
 
-      expect(profileResponse.statusCode, 200);
-      expect(profileResponse.data['success'], isTrue);
-      expect(profileResponse.data['data']['email'], testEmail);
+      // Patient -> Admin Dashboard = Forbidden (403)
+      try {
+        await dio.get(
+          '/admin/dashboard',
+          options: Options(headers: {'Authorization': 'Bearer $patientToken'}),
+        );
+        fail('Patient should be forbidden from admin dashboard');
+      } on DioException catch (e) {
+        expect(e.response?.statusCode, 403);
+      }
 
-      // 3. Authenticated Appointments List
-      final aptResponse = await dio.get(
-        '/patient/appointments',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      // Login as Doctor
+      final docLogin = await dio.post('/auth/login', data: {
+        'email': 'doctor@healthcare.test',
+        'password': 'Password123!',
+      });
+      final docToken = docLogin.data['data']['token'];
+
+      // Doctor -> Doctor Dashboard = Allowed
+      final docDashRes = await dio.get(
+        '/doctor/dashboard',
+        options: Options(headers: {'Authorization': 'Bearer $docToken'}),
       );
+      expect(docDashRes.statusCode, 200);
 
-      expect(aptResponse.statusCode, 200);
-      expect(aptResponse.data['success'], isTrue);
-      expect(aptResponse.data['data'], isA<List>());
+      // Doctor -> Admin Dashboard = Forbidden (403)
+      try {
+        await dio.get(
+          '/admin/dashboard',
+          options: Options(headers: {'Authorization': 'Bearer $docToken'}),
+        );
+        fail('Doctor should be forbidden from admin dashboard');
+      } on DioException catch (e) {
+        expect(e.response?.statusCode, 403);
+      }
 
-      // 4. Logout
-      final logoutResponse = await dio.post(
-        '/auth/logout',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      // Login as Staff
+      final staffLogin = await dio.post('/auth/login', data: {
+        'email': 'staff@healthcare.test',
+        'password': 'Password123!',
+      });
+      final staffToken = staffLogin.data['data']['token'];
+
+      // Staff -> Staff Dashboard = Allowed
+      final staffDashRes = await dio.get(
+        '/staff/dashboard',
+        options: Options(headers: {'Authorization': 'Bearer $staffToken'}),
       );
+      expect(staffDashRes.statusCode, 200);
 
-      expect(logoutResponse.statusCode, 200);
-      expect(logoutResponse.data['success'], isTrue);
+      // Staff -> Owner Dashboard = Forbidden (403)
+      try {
+        await dio.get(
+          '/owner/dashboard',
+          options: Options(headers: {'Authorization': 'Bearer $staffToken'}),
+        );
+        fail('Staff should be forbidden from owner dashboard');
+      } on DioException catch (e) {
+        expect(e.response?.statusCode, 403);
+      }
+
+      // Login as Admin
+      final adminLogin = await dio.post('/auth/login', data: {
+        'email': 'admin@healthcare.test',
+        'password': 'Password123!',
+      });
+      final adminToken = adminLogin.data['data']['token'];
+
+      // Admin -> Admin Dashboard = Allowed
+      final adminDashRes = await dio.get(
+        '/admin/dashboard',
+        options: Options(headers: {'Authorization': 'Bearer $adminToken'}),
+      );
+      expect(adminDashRes.statusCode, 200);
+
+      // Login as Owner
+      final ownerLogin = await dio.post('/auth/login', data: {
+        'email': 'owner@healthcare.test',
+        'password': 'Password123!',
+      });
+      final ownerToken = ownerLogin.data['data']['token'];
+
+      // Owner -> Owner Dashboard = Allowed
+      final ownerDashRes = await dio.get(
+        '/owner/dashboard',
+        options: Options(headers: {'Authorization': 'Bearer $ownerToken'}),
+      );
+      expect(ownerDashRes.statusCode, 200);
     });
   });
 }

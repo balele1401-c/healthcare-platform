@@ -53,7 +53,7 @@ class _PatientLoginScreenState extends ConsumerState<PatientLoginScreen> {
 
     if (success) {
       final user = ref.read(authControllerProvider).user;
-      if (user != null && !user.isHealthProfileCompleted) {
+      if (user != null && user.isPatient && !user.isHealthProfileCompleted) {
         context.go(AppRoutes.createHealthProfile);
       } else {
         context.go(AppRoutes.home);

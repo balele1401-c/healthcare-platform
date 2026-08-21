@@ -33,7 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('admin.login');
         });
         $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureRole::class,
             'admin' => \App\Http\Middleware\EnsureAdminRole::class,
+            'owner' => \App\Http\Middleware\EnsureOwnerRole::class,
             'doctor' => \App\Http\Middleware\EnsureDoctorRole::class,
             'staff' => \App\Http\Middleware\EnsureStaffRole::class,
         ]);

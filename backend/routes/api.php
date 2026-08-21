@@ -64,8 +64,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             ]);
         })->name('user');
 
-        // Patient Dedicated Endpoints
-        Route::prefix('patient')->name('patient.')->group(function () {
+        // Patient Dedicated Endpoints (Protected for Patient, Admin, Owner)
+        Route::prefix('patient')->middleware('role:patient,admin,owner')->name('patient.')->group(function () {
             Route::get('/profile', [PatientController::class, 'profile'])->name('profile');
             Route::put('/profile', [PatientController::class, 'updateProfile'])->name('profile.update');
             Route::get('/appointments', [PatientController::class, 'appointments'])->name('appointments');
@@ -73,6 +73,26 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('/prescriptions', [PatientController::class, 'prescriptions'])->name('prescriptions');
             Route::get('/health-metrics', [PatientController::class, 'healthMetrics'])->name('health-metrics');
             Route::get('/notifications', [PatientController::class, 'notifications'])->name('notifications');
+        });
+
+        // Doctor Dedicated Endpoints (Protected for Doctor, Admin, Owner)
+        Route::prefix('doctor')->middleware('role:doctor,admin,owner')->name('doctor.')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\Api\V1\DashboardController::class, 'doctor'])->name('dashboard');
+        });
+
+        // Staff Dedicated Endpoints (Protected for Staff, Admin, Owner)
+        Route::prefix('staff')->middleware('role:staff,admin,owner')->name('staff.')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\Api\V1\DashboardController::class, 'staff'])->name('dashboard');
+        });
+
+        // Admin Dedicated Endpoints (Protected for Admin, Owner)
+        Route::prefix('admin')->middleware('role:admin,owner')->name('admin.')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\Api\V1\DashboardController::class, 'admin'])->name('dashboard');
+        });
+
+        // Owner Dedicated Endpoints (Protected for Owner & Admin)
+        Route::prefix('owner')->middleware('role:owner,admin')->name('owner.')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\Api\V1\DashboardController::class, 'owner'])->name('dashboard');
         });
 
         // Appointments & Consultations

@@ -40,12 +40,39 @@ class DatabaseSeeder extends Seeder
     {
         $defaultPassword = Hash::make('Password123!');
 
-        // 1. Admin User
+        // 1. Standard Multi-Role Test Accounts
+        // A. Owner Test User
+        User::firstOrCreate(
+            ['email' => 'owner@healthcare.test'],
+            [
+                'name' => 'Platform Executive Owner',
+                'phone' => '+15550000099',
+                'password' => $defaultPassword,
+                'role' => UserRole::OWNER,
+                'status' => UserStatus::ACTIVE,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // B. Admin Test User
         $adminUser = User::firstOrCreate(
-            ['email' => 'admin@healthcare.local'],
+            ['email' => 'admin@healthcare.test'],
             [
                 'name' => 'System Administrator',
                 'phone' => '+15550000001',
+                'password' => $defaultPassword,
+                'role' => UserRole::ADMIN,
+                'status' => UserStatus::ACTIVE,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Legacy admin fallback
+        User::firstOrCreate(
+            ['email' => 'admin@healthcare.local'],
+            [
+                'name' => 'System Administrator (Local)',
+                'phone' => '+15550000002',
                 'password' => $defaultPassword,
                 'role' => UserRole::ADMIN,
                 'status' => UserStatus::ACTIVE,
@@ -65,7 +92,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Specialties
+        // 2. Specialties Catalog
         $cardiology = Specialty::firstOrCreate(
             ['slug' => 'cardiology'],
             [
@@ -126,7 +153,38 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Doctors
+        // 3. Doctor Accounts & Profiles
+        // C. Doctor Test User
+        $testDocUser = User::firstOrCreate(
+            ['email' => 'doctor@healthcare.test'],
+            [
+                'name' => 'Dr. Alexander Wright',
+                'phone' => '+15550192800',
+                'password' => $defaultPassword,
+                'role' => UserRole::DOCTOR,
+                'status' => UserStatus::ACTIVE,
+                'avatar_url' => 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $testDoctor = Doctor::firstOrCreate(
+            ['user_id' => $testDocUser->id],
+            [
+                'specialty_id' => $familyMedicine->id,
+                'license_number' => 'MD-GEN-2018-1190',
+                'biography' => 'Dr. Alexander Wright is an experienced family physician specializing in preventive medicine and patient wellness.',
+                'education' => 'Columbia University Vagelos College of Physicians and Surgeons (2018)',
+                'experience_years' => 7,
+                'consultation_fee' => 50.00,
+                'facility' => 'Central Health Family Clinic',
+                'profile_photo' => $testDocUser->avatar_url,
+                'rating' => 4.85,
+                'review_count' => 64,
+                'status' => 'active',
+            ]
+        );
+
         $docUser1 = User::firstOrCreate(
             ['email' => 'dr.chen@healthcare.local'],
             [
@@ -188,57 +246,66 @@ class DatabaseSeeder extends Seeder
         );
 
         // Doctor Schedules
-        foreach ([1, 2, 3, 4, 5] as $day) {
-            DoctorSchedule::firstOrCreate(
-                [
-                    'doctor_id' => $doctor1->id,
-                    'day_of_week' => $day,
-                    'consultation_type' => ConsultationType::IN_PERSON,
-                ],
-                [
-                    'start_time' => '09:00:00',
-                    'end_time' => '13:00:00',
-                    'facility' => 'Metropolitan Heart Institute - Room 402',
-                    'slot_duration_minutes' => 30,
-                    'max_patients' => 8,
-                    'is_available' => true,
-                ]
-            );
+        foreach ([$testDoctor, $doctor1] as $doc) {
+            foreach ([1, 2, 3, 4, 5] as $day) {
+                DoctorSchedule::firstOrCreate(
+                    [
+                        'doctor_id' => $doc->id,
+                        'day_of_week' => $day,
+                        'consultation_type' => ConsultationType::IN_PERSON,
+                    ],
+                    [
+                        'start_time' => '09:00:00',
+                        'end_time' => '13:00:00',
+                        'facility' => $doc->facility ?? 'Metropolitan Medical Center',
+                        'slot_duration_minutes' => 30,
+                        'max_patients' => 8,
+                        'is_available' => true,
+                    ]
+                );
 
-            DoctorSchedule::firstOrCreate(
-                [
-                    'doctor_id' => $doctor1->id,
-                    'day_of_week' => $day,
-                    'consultation_type' => ConsultationType::ONLINE,
-                ],
-                [
-                    'start_time' => '14:00:00',
-                    'end_time' => '17:00:00',
-                    'facility' => 'Telehealth Virtual Room',
-                    'slot_duration_minutes' => 30,
-                    'max_patients' => 6,
-                    'is_available' => true,
-                ]
-            );
-
-            DoctorSchedule::firstOrCreate(
-                [
-                    'doctor_id' => $doctor2->id,
-                    'day_of_week' => $day,
-                    'consultation_type' => ConsultationType::IN_PERSON,
-                ],
-                [
-                    'start_time' => '10:00:00',
-                    'end_time' => '16:00:00',
-                    'facility' => 'Clarity Dermatology - Suite 210',
-                    'slot_duration_minutes' => 30,
-                    'max_patients' => 12,
-                    'is_available' => true,
-                ]
-            );
+                DoctorSchedule::firstOrCreate(
+                    [
+                        'doctor_id' => $doc->id,
+                        'day_of_week' => $day,
+                        'consultation_type' => ConsultationType::ONLINE,
+                    ],
+                    [
+                        'start_time' => '14:00:00',
+                        'end_time' => '17:00:00',
+                        'facility' => 'Telehealth Virtual Room',
+                        'slot_duration_minutes' => 30,
+                        'max_patients' => 6,
+                        'is_available' => true,
+                    ]
+                );
+            }
         }
 
-        // 4. Staff Users
+        // 4. Staff Accounts & Profiles
+        // D. Staff Test User
+        $testStaffUser = User::firstOrCreate(
+            ['email' => 'staff@healthcare.test'],
+            [
+                'name' => 'Jessica Parker (Operations)',
+                'phone' => '+15550193000',
+                'password' => $defaultPassword,
+                'role' => UserRole::STAFF,
+                'status' => UserStatus::ACTIVE,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        Staff::firstOrCreate(
+            ['user_id' => $testStaffUser->id],
+            [
+                'department' => 'Patient Care Coordination & Admissions',
+                'employee_number' => 'EMP-STF-001',
+                'facility' => 'Central Metropolitan Hospital',
+                'status' => 'active',
+            ]
+        );
+
         $staffUser1 = User::firstOrCreate(
             ['email' => 'staff.reception@healthcare.local'],
             [
@@ -261,29 +328,37 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $staffUser2 = User::firstOrCreate(
-            ['email' => 'staff.billing@healthcare.local'],
+        // 5. Patient Accounts & Profiles
+        // E. Patient Test User
+        $testPatientUser = User::firstOrCreate(
+            ['email' => 'patient@healthcare.test'],
             [
-                'name' => 'Monica Geller (Billing)',
-                'phone' => '+15550193002',
+                'name' => 'Alex Turner',
+                'phone' => '+15550192899',
                 'password' => $defaultPassword,
-                'role' => UserRole::STAFF,
+                'role' => UserRole::PATIENT,
                 'status' => UserStatus::ACTIVE,
                 'email_verified_at' => now(),
             ]
         );
 
-        Staff::firstOrCreate(
-            ['user_id' => $staffUser2->id],
+        Patient::firstOrCreate(
+            ['user_id' => $testPatientUser->id],
             [
-                'department' => 'Medical Billing & Insurance Operations',
-                'employee_number' => 'EMP-BIL-002',
-                'facility' => 'Central Metropolitan Hospital',
-                'status' => 'active',
+                'date_of_birth' => '1995-06-20',
+                'gender' => 'male',
+                'blood_type' => 'O+',
+                'height_cm' => 178.00,
+                'weight_kg' => 74.00,
+                'address' => '12 Innovation Way, Tech Park',
+                'emergency_contact_name' => 'Emma Turner',
+                'emergency_contact_phone' => '+15550195899',
+                'emergency_contact_relation' => 'Spouse',
+                'allergies' => 'None',
+                'medical_history_summary' => 'Routine annual fitness evaluations.',
             ]
         );
 
-        // 5. Patients (5 Demo Patients)
         $patientUsers = [
             [
                 'name' => 'Sarah Jenkins',
@@ -316,54 +391,6 @@ class DatabaseSeeder extends Seeder
                 'emergency_rel' => 'Sister',
                 'allergies' => 'None reported',
                 'medical_history' => 'Seasonal allergic rhinitis.',
-            ],
-            [
-                'name' => 'Elena Rostova',
-                'email' => 'elena.rostova@example.com',
-                'phone' => '+15550192836',
-                'dob' => '1998-11-03',
-                'gender' => 'female',
-                'blood_type' => 'B+',
-                'height' => 165.00,
-                'weight' => 58.00,
-                'address' => '55 Ocean Boulevard, Santa Monica',
-                'emergency_name' => 'Sergei Rostov',
-                'emergency_phone' => '+15550195823',
-                'emergency_rel' => 'Father',
-                'allergies' => 'Aspirin',
-                'medical_history' => 'Contact dermatitis on upper extremities.',
-            ],
-            [
-                'name' => 'Marcus Aurelius',
-                'email' => 'marcus.aurelius@example.com',
-                'phone' => '+15550192837',
-                'dob' => '1976-02-14',
-                'gender' => 'male',
-                'blood_type' => 'AB+',
-                'height' => 175.00,
-                'weight' => 76.50,
-                'address' => '88 Roman Way, Glendale',
-                'emergency_name' => 'Faustina Aurelius',
-                'emergency_phone' => '+15550195824',
-                'emergency_rel' => 'Spouse',
-                'allergies' => 'Latex',
-                'medical_history' => 'Occasional tension headaches.',
-            ],
-            [
-                'name' => 'Olivia Wilde',
-                'email' => 'olivia.wilde@example.com',
-                'phone' => '+15550192838',
-                'dob' => '1990-07-19',
-                'gender' => 'female',
-                'blood_type' => 'O-',
-                'height' => 170.00,
-                'weight' => 61.00,
-                'address' => '210 Sunset Strip, West Hollywood',
-                'emergency_name' => 'Jason Sudeikis',
-                'emergency_phone' => '+15550195825',
-                'emergency_rel' => 'Partner',
-                'allergies' => 'Sulfa drugs',
-                'medical_history' => 'Annual wellness checks.',
             ],
         ];
 
@@ -428,78 +455,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $metformin = Medicine::firstOrCreate(
-            ['name' => 'Metformin HCl'],
-            [
-                'generic_name' => 'Metformin',
-                'description' => 'Biguanide antidiabetic medication for glycemic control.',
-                'dosage_form' => 'Oral Tablet',
-                'strength' => '500 mg',
-                'manufacturer' => 'Merck',
-                'status' => 'active',
-            ]
-        );
-
-        $hydrocortisone = Medicine::firstOrCreate(
-            ['name' => 'Hydrocortisone Topical Cream'],
-            [
-                'generic_name' => 'Hydrocortisone',
-                'description' => 'Mild topical corticosteroid for skin redness, swelling, and itchiness.',
-                'dosage_form' => 'Topical Cream',
-                'strength' => '1.0%',
-                'manufacturer' => 'GlaxoSmithKline',
-                'status' => 'active',
-            ]
-        );
-
-        $ibuprofen = Medicine::firstOrCreate(
-            ['name' => 'Ibuprofen'],
-            [
-                'generic_name' => 'Ibuprofen',
-                'description' => 'Nonsteroidal anti-inflammatory drug (NSAID) for fever and pain relief.',
-                'dosage_form' => 'Oral Capsule',
-                'strength' => '400 mg',
-                'manufacturer' => 'Bayer HealthCare',
-                'status' => 'active',
-            ]
-        );
-
-        $amoxicillin = Medicine::firstOrCreate(
-            ['name' => 'Amoxicillin Trihydrate'],
-            [
-                'generic_name' => 'Amoxicillin',
-                'description' => 'Broad-spectrum penicillin antibiotic.',
-                'dosage_form' => 'Oral Capsule',
-                'strength' => '500 mg',
-                'manufacturer' => 'Novartis Sandoz',
-                'status' => 'active',
-            ]
-        );
-
-        $melatonin = Medicine::firstOrCreate(
-            ['name' => 'Melatonin Extended Release'],
-            [
-                'generic_name' => 'Melatonin',
-                'description' => 'Hormone supplement supporting healthy circadian rhythm and sleep onset.',
-                'dosage_form' => 'Oral Tablet',
-                'strength' => '3 mg',
-                'manufacturer' => 'Nature Made Health',
-                'status' => 'active',
-            ]
-        );
-
-        $paracetamol = Medicine::firstOrCreate(
-            ['name' => 'Paracetamol (Acetaminophen)'],
-            [
-                'generic_name' => 'Acetaminophen',
-                'description' => 'Analgesic and antipyretic agent for mild to moderate pain.',
-                'dosage_form' => 'Oral Tablet',
-                'strength' => '500 mg',
-                'manufacturer' => 'Johnson & Johnson',
-                'status' => 'active',
-            ]
-        );
-
         // 7. Appointments for Sarah Jenkins
         $upcomingAppt = Appointment::firstOrCreate(
             ['booking_code' => 'APT-98214'],
@@ -532,44 +487,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $completedAppt = Appointment::firstOrCreate(
-            ['booking_code' => 'APT-84192'],
-            [
-                'patient_id' => $primaryPatient->id,
-                'doctor_id' => $doctor1->id,
-                'appointment_date' => now()->subDays(14)->toDateString(),
-                'appointment_time' => '11:00:00',
-                'status' => AppointmentStatus::COMPLETED,
-                'consultation_type' => ConsultationType::IN_PERSON,
-                'facility' => 'Metropolitan Heart Institute - Room 402',
-                'consultation_fee' => 75.00,
-                'service_fee' => 5.00,
-                'total_amount' => 80.00,
-                'notes' => 'Initial consultation for mild hypertension.',
-            ]
-        );
-
-        Payment::firstOrCreate(
-            ['appointment_id' => $completedAppt->id],
-            [
-                'payment_reference' => 'PAY-' . strtoupper(Str::random(10)),
-                'patient_id' => $primaryPatient->id,
-                'amount' => 80.00,
-                'currency' => 'USD',
-                'payment_method' => 'Credit Card (•••• 4242)',
-                'status' => PaymentStatus::PAID,
-                'provider_reference' => 'STRIPE_CH_' . strtoupper(Str::random(12)),
-                'paid_at' => now()->subDays(14),
-            ]
-        );
-
-        // 8. Medical Records & Vital Signs
+        // 8. Medical Records
         $record1 = MedicalRecord::firstOrCreate(
             ['record_number' => 'MR-2026-00481'],
             [
                 'patient_id' => $primaryPatient->id,
                 'doctor_id' => $doctor1->id,
-                'appointment_id' => $completedAppt->id,
+                'appointment_id' => $upcomingAppt->id,
                 'visit_date' => now()->subDays(14)->toDateString(),
                 'chief_complaint' => 'Mild episodic dizziness and elevated home blood pressure readings (130-135 mmHg systolic).',
                 'symptoms' => 'Mild afternoon fatigue, occasional slight headache.',
@@ -599,7 +523,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 9. Prescriptions & Prescription Items
+        // 9. Prescriptions
         $rx1 = Prescription::firstOrCreate(
             ['prescription_code' => 'RX-2026-9921'],
             [
@@ -621,93 +545,6 @@ class DatabaseSeeder extends Seeder
                 'instructions' => 'Take with a glass of water after breakfast. Avoid grapefruit juice.',
                 'quantity' => 30,
                 'refills_available' => 2,
-            ]
-        );
-
-        // 10. Health Metrics for Sarah Jenkins
-        $metricsData = [
-            ['type' => HealthMetricType::HEART_RATE, 'val' => 72.0, 'sec' => null, 'unit' => 'bpm', 'days' => 0],
-            ['type' => HealthMetricType::HEART_RATE, 'val' => 69.0, 'sec' => null, 'unit' => 'bpm', 'days' => 1],
-            ['type' => HealthMetricType::HEART_RATE, 'val' => 75.0, 'sec' => null, 'unit' => 'bpm', 'days' => 2],
-            ['type' => HealthMetricType::BLOOD_PRESSURE, 'val' => 118.0, 'sec' => 76.0, 'unit' => 'mmHg', 'days' => 0],
-            ['type' => HealthMetricType::BLOOD_PRESSURE, 'val' => 122.0, 'sec' => 80.0, 'unit' => 'mmHg', 'days' => 2],
-            ['type' => HealthMetricType::BLOOD_PRESSURE, 'val' => 128.0, 'sec' => 82.0, 'unit' => 'mmHg', 'days' => 14],
-            ['type' => HealthMetricType::WEIGHT, 'val' => 64.5, 'sec' => null, 'unit' => 'kg', 'days' => 0],
-            ['type' => HealthMetricType::WEIGHT, 'val' => 64.8, 'sec' => null, 'unit' => 'kg', 'days' => 10],
-            ['type' => HealthMetricType::BMI, 'val' => 22.9, 'sec' => null, 'unit' => 'kg/m²', 'days' => 0],
-            ['type' => HealthMetricType::BLOOD_OXYGEN, 'val' => 99.0, 'sec' => null, 'unit' => '%', 'days' => 0],
-            ['type' => HealthMetricType::BLOOD_GLUCOSE, 'val' => 92.0, 'sec' => null, 'unit' => 'mg/dL', 'days' => 0],
-            ['type' => HealthMetricType::BODY_TEMPERATURE, 'val' => 36.6, 'sec' => null, 'unit' => '°C', 'days' => 0],
-        ];
-
-        foreach ($metricsData as $m) {
-            HealthMetric::firstOrCreate(
-                [
-                    'patient_id' => $primaryPatient->id,
-                    'metric_type' => $m['type'],
-                    'value' => $m['val'],
-                ],
-                [
-                    'secondary_value' => $m['sec'],
-                    'unit' => $m['unit'],
-                    'measured_at' => now()->subDays($m['days'])->subHours(2),
-                    'notes' => 'Recorded via HealthCare Mobile App',
-                ]
-            );
-        }
-
-        // 11. Notifications
-        Notification::firstOrCreate(
-            ['user_id' => $primaryPatient->user_id, 'title' => 'Appointment Reminder'],
-            [
-                'message' => 'Your video consultation with Dr. Emily Chen is scheduled for ' . now()->addDays(2)->format('M d') . ' at 10:30 AM.',
-                'notification_type' => 'appointment',
-                'related_type' => 'Appointment',
-                'related_id' => $upcomingAppt->id,
-                'route_target' => '/my-appointments',
-                'read_at' => null,
-            ]
-        );
-
-        Notification::firstOrCreate(
-            ['user_id' => $primaryPatient->user_id, 'title' => 'Prescription Refill Ready'],
-            [
-                'message' => 'Your Amlodipine Besylate 5mg refill has been authorized by Dr. Emily Chen.',
-                'notification_type' => 'prescription',
-                'related_type' => 'Prescription',
-                'related_id' => $rx1->id,
-                'route_target' => '/prescriptions',
-                'read_at' => now()->subHours(6),
-            ]
-        );
-
-        // 12. Chat Conversations & Messages
-        $chatConv = ChatConversation::firstOrCreate(
-            ['patient_id' => $primaryPatient->id, 'doctor_id' => $doctor1->id],
-            [
-                'appointment_id' => $upcomingAppt->id,
-                'status' => 'active',
-                'last_message_at' => now()->subMinutes(15),
-            ]
-        );
-
-        ChatMessage::firstOrCreate(
-            ['conversation_id' => $chatConv->id, 'sender_id' => $primaryPatient->user_id],
-            [
-                'message' => 'Hello Dr. Chen, I logged my morning blood pressure (118/76 mmHg). Feeling much better on the current dosage.',
-                'message_type' => 'text',
-                'read_at' => now()->subMinutes(12),
-                'created_at' => now()->subMinutes(20),
-            ]
-        );
-
-        ChatMessage::firstOrCreate(
-            ['conversation_id' => $chatConv->id, 'sender_id' => $docUser1->id],
-            [
-                'message' => 'Excellent progress Sarah! Those readings are well within our target range. We will review trends during our video call.',
-                'message_type' => 'text',
-                'read_at' => now()->subMinutes(5),
-                'created_at' => now()->subMinutes(15),
             ]
         );
     }

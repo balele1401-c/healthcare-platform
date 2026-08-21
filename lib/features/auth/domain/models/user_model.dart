@@ -66,4 +66,10 @@ class UserModel {
       isHealthProfileCompleted: hasProfile,
     );
   }
+
+  bool get isPatient => role == 'patient';
+  bool get isDoctor => role == 'doctor';
+  bool get isStaff => role == 'staff';
+  bool get isAdmin => role == 'admin';
+  bool get isOwner => role == 'owner';
 }
