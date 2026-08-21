@@ -26,8 +26,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
 
-    // 1. Health Probe
+    // 1. Health Probe & Safe Production Database Seeder
     Route::get('/health', [HealthController::class, 'check'])->name('health');
+    Route::post('/system/seed', [HealthController::class, 'seed'])->name('system.seed');
 
     // 2. Public / Discovery Endpoints
     Route::prefix('specialties')->name('specialties.')->group(function () {
