@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_constants.dart';
 import '../errors/failures.dart';
@@ -46,9 +47,21 @@ class ApiClient {
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          if (kDebugMode) {
+            debugPrint('[API Request] ${options.method} ${options.uri}');
+          }
           return handler.next(options);
         },
+        onResponse: (response, handler) {
+          if (kDebugMode) {
+            debugPrint('[API Response] ${response.statusCode} ${response.requestOptions.uri}');
+          }
+          return handler.next(response);
+        },
         onError: (DioException error, handler) async {
+          if (kDebugMode) {
+            debugPrint('[API Error] ${error.response?.statusCode} ${error.requestOptions.uri} - ${error.message}');
+          }
           if (error.response?.statusCode == 401) {
             await _storageService.clearSession();
           }

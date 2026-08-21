@@ -100,14 +100,14 @@ abstract class AppTypography {
 
   static TextStyle get button => GoogleFonts.inter(
         fontSize: 16,
-        height: 24 / 16,
+        height: 1.25,
         fontWeight: FontWeight.w600,
         color: AppColors.onPrimary,
       );
 
   static TextStyle get buttonSm => GoogleFonts.inter(
         fontSize: 14,
-        height: 20 / 14,
+        height: 1.25,
         fontWeight: FontWeight.w600,
         color: AppColors.onPrimary,
       );

@@ -199,10 +199,11 @@ void main() {
   });
 
   group('AppConstants URL Configuration Tests', () {
-    test('AppConstants.baseApiUrl resolves default without error', () {
+    test('AppConstants.baseApiUrl resolves default Railway API without error', () {
       final url = AppConstants.baseApiUrl;
       expect(url.contains('/api/v1'), true);
-      expect(url.startsWith('http://'), true);
+      expect(url.startsWith('https://'), true);
+      expect(url, 'https://healthcare-platform-production-5197.up.railway.app/api/v1');
     });
 
     test('AppConstants customBaseApiUrl override takes precedence', () {

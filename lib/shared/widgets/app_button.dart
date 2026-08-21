@@ -57,46 +57,63 @@ class _AppButtonState extends State<AppButton> {
     }
 
     Widget content(Color foregroundColor) {
-      return Row(
-        mainAxisSize: widget.isFullWidth ? MainAxisSize.max : MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (widget.isLoading)
-            buildLoading(foregroundColor)
-          else ...[
-            if (widget.prefixWidget != null) ...[
-              widget.prefixWidget!,
-              const SizedBox(width: AppSpacing.sm + 2),
-            ] else if (widget.prefixIcon != null) ...[
-              buildIcon(widget.prefixIcon!, foregroundColor),
-              const SizedBox(width: AppSpacing.sm),
-            ],
-            Flexible(
-              child: Text(
-                widget.text,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: AppTypography.button.copyWith(
-                  color: foregroundColor,
-                  letterSpacing: -0.1,
-                  fontWeight: FontWeight.w600,
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2.0),
+        child: Row(
+          mainAxisSize: widget.isFullWidth ? MainAxisSize.max : MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (widget.isLoading)
+              buildLoading(foregroundColor)
+            else ...[
+              if (widget.prefixWidget != null) ...[
+                widget.prefixWidget!,
+                const SizedBox(width: AppSpacing.sm + 2),
+              ] else if (widget.prefixIcon != null) ...[
+                buildIcon(widget.prefixIcon!, foregroundColor),
+                const SizedBox(width: AppSpacing.sm),
+              ],
+              Flexible(
+                child: Text(
+                  widget.text,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: AppTypography.button.copyWith(
+                    color: foregroundColor,
+                    letterSpacing: -0.1,
+                    fontWeight: FontWeight.w600,
+                    height: 1.25,
+                    leadingDistribution: TextLeadingDistribution.even,
+                  ),
                 ),
               ),
-            ),
-            if (widget.suffixIcon != null) ...[
-              const SizedBox(width: AppSpacing.sm),
-              buildIcon(widget.suffixIcon!, foregroundColor),
-            ],
-          ]
-        ],
+              if (widget.suffixIcon != null) ...[
+                const SizedBox(width: AppSpacing.sm),
+                buildIcon(widget.suffixIcon!, foregroundColor),
+              ],
+            ]
+          ],
+        ),
       );
     }
+
+    final buttonPadding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.sm,
+    );
+    final minSize = Size(widget.isFullWidth ? double.infinity : 0, widget.height);
 
     Widget buttonWidget;
     switch (widget.variant) {
       case ButtonVariant.primary:
         final fg = disabled ? AppColors.outline : AppColors.onPrimary;
         buttonWidget = Container(
+          constraints: BoxConstraints(
+            minHeight: widget.height,
+            minWidth: widget.isFullWidth ? double.infinity : 0,
+          ),
           decoration: BoxDecoration(
             borderRadius: AppRadius.radiusBase,
             gradient: disabled
@@ -124,6 +141,8 @@ class _AppButtonState extends State<AppButton> {
               shadowColor: Colors.transparent,
               disabledBackgroundColor: Colors.transparent,
               disabledForegroundColor: AppColors.outline,
+              padding: buttonPadding,
+              minimumSize: minSize,
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.radiusBase,
               ),
@@ -142,6 +161,8 @@ class _AppButtonState extends State<AppButton> {
             disabledBackgroundColor: AppColors.surfaceContainer,
             disabledForegroundColor: AppColors.outline,
             elevation: 0,
+            padding: buttonPadding,
+            minimumSize: minSize,
             shape: const RoundedRectangleBorder(
               borderRadius: AppRadius.radiusBase,
               side: BorderSide(color: AppColors.secondaryFixedDim, width: 0.8),
@@ -157,6 +178,8 @@ class _AppButtonState extends State<AppButton> {
           style: OutlinedButton.styleFrom(
             backgroundColor: _isHovering ? AppColors.surfaceContainerLow : AppColors.surface,
             disabledForegroundColor: AppColors.outline,
+            padding: buttonPadding,
+            minimumSize: minSize,
             shape: const RoundedRectangleBorder(
               borderRadius: AppRadius.radiusBase,
             ),
@@ -180,6 +203,8 @@ class _AppButtonState extends State<AppButton> {
           onPressed: disabled ? null : widget.onPressed,
           style: TextButton.styleFrom(
             disabledForegroundColor: AppColors.outline,
+            padding: buttonPadding,
+            minimumSize: minSize,
             shape: const RoundedRectangleBorder(
               borderRadius: AppRadius.radiusBase,
             ),
@@ -197,6 +222,8 @@ class _AppButtonState extends State<AppButton> {
             disabledBackgroundColor: AppColors.surfaceContainer,
             disabledForegroundColor: AppColors.outline,
             elevation: 0,
+            padding: buttonPadding,
+            minimumSize: minSize,
             shape: const RoundedRectangleBorder(
               borderRadius: AppRadius.radiusBase,
             ),
@@ -206,9 +233,11 @@ class _AppButtonState extends State<AppButton> {
         break;
     }
 
-    final sized = SizedBox(
-      width: widget.isFullWidth ? double.infinity : null,
-      height: widget.height,
+    final sized = ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: widget.isFullWidth ? double.infinity : 0,
+        minHeight: widget.height,
+      ),
       child: buttonWidget,
     );
 

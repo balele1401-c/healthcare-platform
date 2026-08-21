@@ -22,8 +22,8 @@ abstract class AppSpacing {
   static const EdgeInsets paddingCard = EdgeInsets.all(lg);
   static const EdgeInsets paddingCardSm = EdgeInsets.all(md);
   static const EdgeInsets paddingInput = EdgeInsets.symmetric(horizontal: md, vertical: sm + 4);
-  static const EdgeInsets paddingButton = EdgeInsets.symmetric(horizontal: lg, vertical: md);
-  static const EdgeInsets paddingButtonSm = EdgeInsets.symmetric(horizontal: md, vertical: sm);
+  static const EdgeInsets paddingButton = EdgeInsets.symmetric(horizontal: lg, vertical: sm + 2);
+  static const EdgeInsets paddingButtonSm = EdgeInsets.symmetric(horizontal: md, vertical: xs + 2);
 
   // Vertical SizedBox Spacers
   static const SizedBox gapVXs = SizedBox(height: xs);
